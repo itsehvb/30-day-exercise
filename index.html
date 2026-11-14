@@ -327,8 +327,10 @@ var SVG = {
 function V(name, w, h, note){ return {type:'video', src:'images/'+name+'.mp4', poster:'images/'+name+'.jpg', w:w||640, h:h||480, note:note}; }
 function I(name, w, h, note){ return {type:'img', src:'images/'+name+'.jpg', w:w||640, h:h||480, note:note}; }
 function S(name){ return {type:'svg', svg:name}; }
+/* folder name changes whenever the passcode changes, so old offline copies are never mixed in */
+var PRIV_DIR = 'images/private2/';
 /* private clip: an encrypted personal clip that plays once unlocked on this device; until then the free clip is shown */
-function Pv(name, w, h, by, fallback){ return {type:'priv', src:'images/private/'+name+'.bin', w:w, h:h, by:by, fallback:fallback}; }
+function Pv(name, w, h, by, fallback){ return {type:'priv', src:PRIV_DIR+name+'.bin', w:w, h:h, by:by, fallback:fallback}; }
 
 /* ---------- program (exercise text exactly as written) ---------- */
 var KNEE = {
@@ -631,7 +633,7 @@ var privKey = null, privBlobs = {}, PASS_KEY = 'ex30:pass';
 function b64(s){ return Uint8Array.from(atob(s), function(c){ return c.charCodeAt(0); }); }
 function privSupported(){ return !!(window.crypto && crypto.subtle && window.isSecureContext); }
 function deriveKey(pass){
-  return fetch('images/private/meta.json').then(function(r){ return r.json(); }).then(function(meta){
+  return fetch(PRIV_DIR+'meta.json').then(function(r){ return r.json(); }).then(function(meta){
     return crypto.subtle.importKey('raw', new TextEncoder().encode(pass), 'PBKDF2', false, ['deriveKey']).then(function(base){
       return crypto.subtle.deriveKey({name:'PBKDF2', salt:b64(meta.salt), iterations:meta.iter, hash:'SHA-256'}, base, {name:'AES-GCM', length:256}, false, ['decrypt']);
     }).then(function(key){
