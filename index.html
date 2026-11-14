@@ -151,11 +151,12 @@ a{color:var(--accent-ink)}
 .fig .lbl{fill:var(--muted);font:600 16px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 .extra{margin:0 0 10px;border-radius:12px;overflow:hidden}
 .extra svg{display:block;width:100%;height:auto}
-.media.yt{position:relative;overflow:hidden;background:var(--media)}
-.media.yt img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.85)}
-.media.yt iframe,.media.yt .ytslot{position:absolute;border:0;display:block;pointer-events:none}
+.media.yt{position:relative;overflow:hidden;background:#111}
+.media.yt iframe,.media.yt .ytslot{position:absolute;border:0;display:block;pointer-events:none;z-index:0}
+.media.yt .ytcover{position:absolute;inset:0;z-index:1;background:#111;overflow:hidden;transition:opacity .25s}
+.media.yt .ytcover img{position:absolute;max-width:none;width:100%;height:100%;object-fit:cover}
+.media.yt.ytlive .ytcover{opacity:0}
 .media.yt .pill{z-index:2}
-.media.yt.ytlive img{display:none}
 .fig .pr{stroke:var(--prop);fill:none;stroke-linecap:round;stroke-linejoin:round}
 .fig .prf{fill:var(--prop)}
 .fig .ar{stroke:var(--accent);fill:none;stroke-width:5;stroke-linecap:round}
@@ -343,8 +344,8 @@ var KNEE = {
     {title:'Stretches (10 min)', items:[
       {id:'k2', name:'Side-lying quad stretch', target:'Front of the thigh (quads)', dose:'2 × 30 s per side', how:'Lie on your side, bend the top knee and pull the heel toward your glute. Push the hips slightly forward and keep the back flat.', media:Y('nUoSkE8eJO8',{box:'16 / 9', va:1, start:10.2, end:16.0, fy:0.78, z:1.15},'Dynamic Cyclist', S('sidequad')), timer:{opts:[30], hint:'Repeat for each side and each set.'}},
       {id:'k3', name:'Lying hamstring stretch', target:'Back of the thigh (hamstrings)', dose:'2 × 30 s per side', how:'On your back, loop a towel or band around one foot. Raise that leg with the knee nearly straight until you feel a gentle pull behind the thigh.', media:Y('yrGLCjsPJ6E',{box:'4 / 3', va:0.5625, start:1.0, end:13.5, fy:0.57},'SHRP Training', V('hamstring')), timer:{opts:[30], hint:'Repeat for each side and each set.'}},
-      {id:'k3b', onlyWeek:1, name:'Butterfly stretch', target:'Inner thigh (adductors)', dose:'2 × 30 s', how:'Sit tall with the soles of your feet together and hold your ankles. Let the knees fall out to the sides and lean slightly forward from the hips until you feel a gentle stretch in the inner thighs. Do not push the knees down. If the left knee feels strained, slide the feet further away from you.', media:V('butterfly'), weeks:{1:'Week 1 extra: stretches the inner thigh.'}, timer:{opts:[30], hint:'Repeat for each set.'}},
-      {id:'k3c', onlyWeek:1, name:'Seated glute stretch (knee across)', target:'Outer hip and buttock (glutes)', dose:'2 × 30 s per side', how:'Sit with both legs straight. Bend one knee and place that foot flat on the floor on the outside of the other knee. Sit tall and hug the bent knee toward the opposite shoulder until you feel a stretch in the buttock and outer hip.', media:V('glutestretch'), weeks:{1:'Week 1 extra: stretches the outer hip and buttock.'}, timer:{opts:[30], hint:'Repeat for each side and each set.'}},
+      {id:'k3b', onlyWeek:1, name:'Butterfly stretch', target:'Inner thigh (adductors)', dose:'2 × 30 s', how:'Sit tall with the soles of your feet together and hold your ankles. Let the knees fall out to the sides and lean slightly forward from the hips until you feel a gentle stretch in the inner thighs. Do not push the knees down. If the left knee feels strained, slide the feet further away from you.', media:Y('dF2olILOtjM',{box:'3 / 4', va:0.5625, start:16.5, end:25.5, fy:0.16},'BODi', V('butterfly')), weeks:{1:'Week 1 extra: stretches the inner thigh.'}, timer:{opts:[30], hint:'Repeat for each set.'}},
+      {id:'k3c', onlyWeek:1, name:'Seated glute stretch (knee across)', target:'Outer hip and buttock (glutes)', dose:'2 × 30 s per side', how:'Sit with both legs straight. Bend one knee and place that foot flat on the floor on the outside of the other knee. Sit tall and hug the bent knee toward the opposite shoulder until you feel a stretch in the buttock and outer hip.', media:Y('rHuiDKUEL_4',{box:'4 / 3', va:0.5625, start:8.0, end:20.5, fy:0.57},'Kinesis Integrated', V('glutestretch')), weeks:{1:'Week 1 extra: stretches the outer hip and buttock.'}, timer:{opts:[30], hint:'Repeat for each side and each set.'}},
       {id:'k4', name:'Wall calf stretch', target:'Calf', dose:'2 × 30 s per side', how:'Hands on a wall, one leg back with the knee straight and the heel pressed down. Lean in until the calf stretches.', media:Y('f1HzSAuB-Vw',{box:'4 / 3', va:1.7778, start:2.8, end:9.2, fx:0.6, z:1.04},'FitnessBlender', V('calfstretch')), timer:{opts:[30], hint:'Repeat for each side and each set.'}}
     ]},
     {title:'Strength', items:[
@@ -403,11 +404,13 @@ var SAFETY = [
 var YT_CREDITS = [
   ['Side-lying quad stretch','Dynamic Cyclist','https://www.youtube.com/shorts/nUoSkE8eJO8'],
   ['Lying hamstring stretch','SHRP Training','https://www.youtube.com/shorts/yrGLCjsPJ6E'],
+  ['Butterfly stretch','BODi','https://www.youtube.com/shorts/dF2olILOtjM'],
+  ['Seated glute stretch','Kinesis Integrated','https://www.youtube.com/shorts/rHuiDKUEL_4'],
   ['Wall calf stretch','FitnessBlender','https://www.youtube.com/watch?v=f1HzSAuB-Vw']
 ];
 var CREDITS = [
-  ['Butterfly stretch','Mikhail Nilov','https://www.pexels.com/video/7500537/'],
-  ['Seated glute stretch','Kampus Production','https://www.pexels.com/video/6891846/'],
+  ['Butterfly stretch (offline clip)','Mikhail Nilov','https://www.pexels.com/video/7500537/'],
+  ['Seated glute stretch (offline clip)','Kampus Production','https://www.pexels.com/video/6891846/'],
   ['Star taps','MART PRODUCTION','https://www.pexels.com/video/8435275/'],
   ['Lying hamstring stretch (offline clip)','Kampus Production','https://www.pexels.com/video/6023250/'],
   ['Wall calf stretch (offline clip)','Ketut Subiyanto','https://www.pexels.com/video/4858889/'],
@@ -494,8 +497,9 @@ function mediaHTML(m, name){
   if (m.type === 'yt') {
     if (navigator.onLine === false && m.fallback) return mediaHTML(m.fallback, name) + '<p class="vnote" style="margin:10px 16px 0">You are offline, so this is the saved version. Connect to the internet to see the YouTube clip.</p>';
     var o = m.o;
+    /* the cover sits over YouTube's player whenever the clip is not playing, so YouTube's own title, buttons and "More videos" never show */
     return '<div class="media yt" style="aspect-ratio:'+o.box+'" data-yt="'+m.id+'" data-start="'+o.start+'" data-end="'+o.end+'" data-va="'+o.va+'" data-fx="'+(o.fx||0.5)+'" data-fy="'+(o.fy||0.5)+'" data-z="'+(o.z||1)+'" aria-label="'+esc(name)+' — looping video clip">'+
-      '<img src="https://i.ytimg.com/vi/'+m.id+'/hqdefault.jpg" alt="" loading="lazy" onerror="this.remove()"><span class="pill">Loading clip…</span></div>';
+      '<div class="ytcover"><img src="https://i.ytimg.com/vi/'+m.id+'/hqdefault.jpg" alt="" loading="lazy" onerror="this.remove()"></div><span class="pill">Loading clip…</span></div>';
   }
   if (m.type === 'svg') return '<div class="media">'+SVG[m.svg]()+'</div>';
   if (m.type === 'img') return '<div class="media"><img src="'+m.src+'" width="'+m.w+'" height="'+m.h+'" alt="'+esc(name)+' — photo" loading="lazy"><span class="pill still">Photo</span></div>';
@@ -617,50 +621,78 @@ function loadYT(){
   return ytApi;
 }
 function sizeYT(box){
-  var f = box.querySelector('iframe, .ytslot'); if (!f) return;
   var W = box.clientWidth, H = box.clientHeight, va = +box.dataset.va || 16/9, z = +box.dataset.z || 1, iw, ih;
+  if (!W || !H) return;
   if (W / H > va) { iw = W; ih = W / va; } else { ih = H; iw = H * va; }
   iw *= z; ih *= z;
-  f.style.width = iw + 'px'; f.style.height = ih + 'px';
-  f.style.left = ((W - iw) * (+box.dataset.fx)) + 'px'; f.style.top = ((H - ih) * (+box.dataset.fy)) + 'px';
+  var left = (W - iw) * (+box.dataset.fx), top = (H - ih) * (+box.dataset.fy);
+  var f = box.querySelector('iframe, .ytslot');
+  if (f) { f.style.width = iw + 'px'; f.style.height = ih + 'px'; f.style.left = left + 'px'; f.style.top = top + 'px'; }
+  /* the poster is YouTube's 4:3 thumbnail, which holds the video letterboxed; line it up with the video frame */
+  var img = box.querySelector('.ytcover img');
+  if (img) {
+    var pw, ph; if (va >= 4/3) { pw = iw; ph = iw * 3/4; } else { ph = ih; pw = ih * 4/3; }
+    img.style.width = pw + 'px'; img.style.height = ph + 'px';
+    img.style.left = (left - (pw - iw) / 2) + 'px'; img.style.top = (top - (ph - ih) / 2) + 'px';
+  }
+}
+function cover(box, on){
+  var rec = ytPlayers.get(box);
+  if (rec) { clearTimeout(rec.coverT); rec.coverT = null; }
+  box.classList.toggle('ytlive', !on);
 }
 function ytStart(box){
   var rec = ytPlayers.get(box);
   if (rec) { rec.want = true; if (rec.ready) rec.p.playVideo(); return; }
   if (navigator.onLine === false) return;
-  rec = {p:null, ready:false, want:true, playing:false, iv:null}; ytPlayers.set(box, rec);
+  rec = {p:null, ready:false, want:true, playing:false, iv:null, coverT:null, stuck:0}; ytPlayers.set(box, rec);
   var s = +box.dataset.start, e = +box.dataset.end;
   loadYT().then(function(YT){
     if (!box.isConnected) { ytPlayers.delete(box); return; }
-    var slot = document.createElement('div'); slot.className = 'ytslot'; box.appendChild(slot); sizeYT(box);
+    var slot = document.createElement('div'); slot.className = 'ytslot'; box.insertBefore(slot, box.firstChild); sizeYT(box);
     rec.p = new YT.Player(slot, {
       host: 'https://www.youtube-nocookie.com', videoId: box.dataset.yt,
       playerVars: {autoplay:1, mute:1, controls:0, disablekb:1, fs:0, iv_load_policy:3, modestbranding:1, playsinline:1, rel:0, cc_load_policy:0, start:Math.floor(s)},
       events: {
         onReady: function(ev){ rec.ready = true; sizeYT(box); ev.target.mute(); ev.target.seekTo(s, true); if (rec.want) ev.target.playVideo(); else ev.target.pauseVideo(); },
         onStateChange: function(ev){
-          if (ev.data === YT.PlayerState.PLAYING) {
-            rec.playing = true; box.classList.add('ytlive'); setPill(box, true);
+          var st = ev.data, P = YT.PlayerState;
+          if (st === P.PLAYING) {
+            rec.playing = true; rec.stuck = 0; setPill(box, true);
             if (!rec.ccOff) { rec.ccOff = true; try { ev.target.unloadModule('captions'); ev.target.unloadModule('cc'); } catch(_) {} }
+            /* keep the cover on for a moment while YouTube's start-up title fades */
+            if (!box.classList.contains('ytlive') && !rec.coverT) rec.coverT = setTimeout(function(){ rec.coverT = null; if (rec.playing) box.classList.add('ytlive'); }, 1200);
+          } else if (st === P.BUFFERING) {
+            /* a short buffer during the loop jump: leave the picture as it is */
+          } else if (st === P.ENDED) {
+            ev.target.seekTo(s, true); ev.target.playVideo();
+          } else {
+            rec.playing = false; cover(box, true); setPill(box, false);
           }
-          else if (ev.data === YT.PlayerState.PAUSED) { rec.playing = false; setPill(box, false); }
-          else if (ev.data === YT.PlayerState.ENDED) { ev.target.seekTo(s, true); ev.target.playVideo(); }
         }
       }
     });
-    /* jump back to the start of the exercise part, so it loops like a GIF */
     rec.iv = setInterval(function(){
-      if (!box.isConnected) { clearInterval(rec.iv); try { rec.p.destroy(); } catch(_) {} ytPlayers.delete(box); return; }
-      try { var t = rec.ready && rec.p.getCurrentTime(); if (t && (t >= e || t < s - 0.5)) rec.p.seekTo(s, true); } catch(_) {}
+      if (!box.isConnected) { clearInterval(rec.iv); clearTimeout(rec.coverT); try { rec.p.destroy(); } catch(_) {} ytPlayers.delete(box); return; }
+      if (!rec.ready) return;
+      try {
+        /* loop: jump back to the start of the exercise part, like a GIF */
+        var t = rec.p.getCurrentTime(); if (t && (t >= e || t < s - 0.5)) rec.p.seekTo(s, true);
+        /* if YouTube paused it by itself while it is on screen, start it again */
+        var st = rec.p.getPlayerState();
+        if (rec.want && !box.dataset.userPaused && (st === 2 || st === 5 || st === -1)) { if (++rec.stuck > 8) { rec.stuck = 0; rec.p.playVideo(); } }
+        else rec.stuck = 0;
+      } catch(_) {}
     }, 150);
   }).catch(function(){ ytPlayers.delete(box); var p = box.querySelector('.pill'); if (p) p.textContent = 'Clip needs internet'; });
 }
-function ytPause(box){ var rec = ytPlayers.get(box); if (rec) { rec.want = false; if (rec.ready) rec.p.pauseVideo(); } }
+function ytPause(box){ var rec = ytPlayers.get(box); cover(box, true); if (rec) { rec.want = false; if (rec.ready) rec.p.pauseVideo(); } }
 window.addEventListener('resize', function(){ app.querySelectorAll('.media.yt').forEach(sizeYT); });
 
 function setupVideos(){
   if (io) io.disconnect();
   var yts = app.querySelectorAll('[data-yt]');
+  yts.forEach(sizeYT);
   var boxes = app.querySelectorAll('[data-video]');
   boxes.forEach(function(box){
     var v = box.querySelector('video');
