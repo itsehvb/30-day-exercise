@@ -110,6 +110,7 @@ a{color:var(--accent-ink)}
 .num{flex:none;width:34px;height:34px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-weight:750}
 .dose{display:inline-block;margin:10px 0;padding:4px 12px;border-radius:999px;background:var(--accent-soft);color:var(--accent-ink);font-weight:750}
 .how{margin:0 0 10px}
+.target{margin:-2px 0 10px;color:var(--accent-ink)}
 .vnote{color:var(--muted);font-size:16px;border-left:3px solid var(--line);padding-left:10px;margin:0 0 10px}
 .wk{background:var(--note);color:var(--note-ink);border-radius:10px;padding:8px 12px;font-weight:650;margin:0 0 10px}
 .tick{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 14px;border:2px solid var(--line);border-radius:14px;cursor:pointer;font-weight:650;margin-top:12px;user-select:none}
@@ -339,11 +340,11 @@ var KNEE = {
   ],
   sections:[
     {title:'Stretches (10 min)', items:[
-      {id:'k2', name:'Side-lying quad stretch', dose:'2 × 30 s per side', how:'Lie on your side, bend the top knee and pull the heel toward your glute. Push the hips slightly forward and keep the back flat.', media:Y('nUoSkE8eJO8','4 / 3','Dynamic Cyclist', S('sidequad')), timer:{opts:[30], hint:'Repeat for each side and each set.'}},
-      {id:'k2b', onlyWeek:1, name:'Standing quad stretch', dose:'2 × 30 s per side', how:'Stand tall with one hand on a wall. Bend one knee and hold the ankle behind you, bringing the heel toward your glute. Keep the knees side by side and the hips pushed slightly forward.', media:V('standquad'), weeks:{1:'Week 1: second quad stretch.'}, timer:{opts:[30], hint:'Repeat for each side and each set.'}},
-      {id:'k3', name:'Lying hamstring stretch', dose:'2 × 30 s per side', how:'On your back, loop a towel or band around one foot. Raise that leg with the knee nearly straight until you feel a gentle pull behind the thigh.', media:Y('yrGLCjsPJ6E','3 / 4','SHRP Training', V('hamstring')), timer:{opts:[30], hint:'Repeat for each side and each set.'}},
-      {id:'k3b', onlyWeek:1, name:'Seated hamstring stretch', dose:'2 × 30 s per side', how:'Sit with one leg straight and the other knee bent out to the side. Keep the back long and lean forward from the hips toward the straight leg until you feel a gentle pull behind the thigh. Do not bounce.', media:V('seatedham',640,360), weeks:{1:'Week 1: second hamstring stretch.'}, timer:{opts:[30], hint:'Repeat for each side and each set.'}},
-      {id:'k4', name:'Wall calf stretch', dose:'2 × 30 s per side', how:'Hands on a wall, one leg back with the knee straight and the heel pressed down. Lean in until the calf stretches.', media:Y('f1HzSAuB-Vw','16 / 9','FitnessBlender', V('calfstretch')), timer:{opts:[30], hint:'Repeat for each side and each set.'}}
+      {id:'k2', name:'Side-lying quad stretch', target:'Front of the thigh (quads)', dose:'2 × 30 s per side', how:'Lie on your side, bend the top knee and pull the heel toward your glute. Push the hips slightly forward and keep the back flat.', media:Y('nUoSkE8eJO8','4 / 3','Dynamic Cyclist', S('sidequad')), timer:{opts:[30], hint:'Repeat for each side and each set.'}},
+      {id:'k3', name:'Lying hamstring stretch', target:'Back of the thigh (hamstrings)', dose:'2 × 30 s per side', how:'On your back, loop a towel or band around one foot. Raise that leg with the knee nearly straight until you feel a gentle pull behind the thigh.', media:Y('yrGLCjsPJ6E','3 / 4','SHRP Training', V('hamstring')), timer:{opts:[30], hint:'Repeat for each side and each set.'}},
+      {id:'k3b', onlyWeek:1, name:'Butterfly stretch', target:'Inner thigh (adductors)', dose:'2 × 30 s', how:'Sit tall with the soles of your feet together and hold your ankles. Let the knees fall out to the sides and lean slightly forward from the hips until you feel a gentle stretch in the inner thighs. Do not push the knees down. If the left knee feels strained, slide the feet further away from you.', media:V('butterfly'), weeks:{1:'Week 1 extra: stretches the inner thigh.'}, timer:{opts:[30], hint:'Repeat for each set.'}},
+      {id:'k3c', onlyWeek:1, name:'Seated glute stretch (knee across)', target:'Outer hip and buttock (glutes)', dose:'2 × 30 s per side', how:'Sit with both legs straight. Bend one knee and place that foot flat on the floor on the outside of the other knee. Sit tall and hug the bent knee toward the opposite shoulder until you feel a stretch in the buttock and outer hip.', media:V('glutestretch'), weeks:{1:'Week 1 extra: stretches the outer hip and buttock.'}, timer:{opts:[30], hint:'Repeat for each side and each set.'}},
+      {id:'k4', name:'Wall calf stretch', target:'Calf', dose:'2 × 30 s per side', how:'Hands on a wall, one leg back with the knee straight and the heel pressed down. Lean in until the calf stretches.', media:Y('f1HzSAuB-Vw','16 / 9','FitnessBlender', V('calfstretch')), timer:{opts:[30], hint:'Repeat for each side and each set.'}}
     ]},
     {title:'Strength', items:[
       {id:'k5', name:'Wall sit', dose:'4 × 30–45 s', how:'Back flat against the wall, slide down until the knees bend to about 60°, not a deep squat. Press the lower back into the wall and hold.', media:I('wallsit',640,480,'The photo shows the position. The ball is not needed.'), timer:{opts:[30,45], byWeek:[30,45,45,45], hint:'Repeat for each set.'}},
@@ -404,8 +405,8 @@ var YT_CREDITS = [
   ['Wall calf stretch','FitnessBlender','https://www.youtube.com/watch?v=f1HzSAuB-Vw']
 ];
 var CREDITS = [
-  ['Standing quad stretch','Ketut Subiyanto','https://www.pexels.com/video/4858890/'],
-  ['Seated hamstring stretch','Kampus Production','https://www.pexels.com/video/6891862/'],
+  ['Butterfly stretch','Mikhail Nilov','https://www.pexels.com/video/7500537/'],
+  ['Seated glute stretch','Kampus Production','https://www.pexels.com/video/6891846/'],
   ['Star taps','MART PRODUCTION','https://www.pexels.com/video/8435275/'],
   ['Lying hamstring stretch (offline clip)','Kampus Production','https://www.pexels.com/video/6023250/'],
   ['Wall calf stretch (offline clip)','Ketut Subiyanto','https://www.pexels.com/video/4858889/'],
@@ -512,7 +513,8 @@ function cardHTML(it, idx, day, week){
   var wk = it.weeks && it.weeks[week] ? '<p class="wk">'+esc(it.weeks[week])+'</p>' : '';
   return '<article class="ex'+(ticked?' ticked':'')+'" id="ex-'+it.id+'">'+mediaHTML(it.media, it.name)+
     '<div class="ex-body"><div class="ex-top"><span class="num">'+idx+'</span><h3>'+esc(it.name)+'</h3></div>'+
-    '<span class="dose">'+esc(it.dose)+'</span>'+wk+
+    '<span class="dose">'+esc(it.dose)+'</span>'+
+    (it.target ? '<p class="target"><b>Targets:</b> '+esc(it.target)+'</p>' : '')+wk+
     '<p class="how">'+esc(it.how)+'</p>'+
     (it.media.note ? '<p class="vnote">'+esc(it.media.note)+'</p>' : '')+
     (it.media.type === 'yt' ? '<p class="vnote">Video by '+esc(it.media.by)+' on YouTube. Needs internet; offline you see a saved version instead.</p>' : '')+
