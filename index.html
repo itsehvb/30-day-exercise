@@ -270,26 +270,6 @@ var SVG = {
       'Hamstring walkout: from a glute bridge, the heels walk out in small steps and back in while the hips stay lifted',
       '0 100 320 140');
   },
-  tke: function(){
-    return svg(
-      '<rect class="prf" x="16" y="226" width="288" height="7" rx="3.5"/>'+
-      '<rect class="prf" x="276" y="28" width="14" height="198" rx="3"/>'+
-      /* far side limbs */
-      P('148,78 138,110 146,130', 12, 'bf')+
-      P('146,128 140,174 138,218', 16, 'bf')+ L(134,222,156,222,10,'bf')+
-      /* ghost: starting position, knee slightly bent */
-      '<g class="gh">'+P('150,128 168,172 152,218', 17, 'b')+'</g>'+
-      /* torso, head */
-      L(150,74,149,126,28,'b')+ C(153,46,15,'hd')+ L(152,58,151,70,12,'b')+
-      /* near leg straight */
-      P('151,128 155,174 152,218', 17, 'b')+ L(148,222,174,222,11,'b')+
-      /* band from anchor, looped behind the knee */
-      '<path class="pr" stroke-width="5" d="M276 162 L166 167 A12 8 0 1 0 166 181 L276 170"/>'+
-      /* near arm */
-      P('154,80 162,112 178,126', 12, 'b')+
-      arrow(130,174,100,174),
-      'Band knee straightening: band anchored in front and looped behind the knee; the knee straightens back against the band');
-  },
   star: function(){
     /* top view: standing foot in the middle, 8 tap points around it */
     var cx = 160, cy = 90, R = 56, out = '', labels = {0:'Front',2:'Side',4:'Back',6:'Side'};
@@ -330,7 +310,7 @@ function S(name){ return {type:'svg', svg:name}; }
 /* folder name changes whenever the passcode changes, so old offline copies are never mixed in */
 var PRIV_DIR = 'images/private2/';
 /* private clip: an encrypted personal clip that plays once unlocked on this device; until then the free clip is shown */
-function Pv(name, w, h, by, fallback){ return {type:'priv', src:PRIV_DIR+name+'.bin', w:w, h:h, by:by, fallback:fallback}; }
+function Pv(name, w, h, by, fallback, note){ return {type:'priv', src:PRIV_DIR+name+'.bin', w:w, h:h, by:by, fallback:fallback, note:note}; }
 
 /* ---------- program (exercise text exactly as written) ---------- */
 var KNEE = {
@@ -338,7 +318,7 @@ var KNEE = {
   purpose:'Purpose: stretch first, then strengthen quads, hamstrings and glutes with slow, controlled reps. Context: I am recovering from a left knee tendon tear.',
   progression:[
     'Week 1: bodyweight only. Learn the movements.',
-    'Week 2: add dumbbells to squats and deadlifts. Wall sit to 45 s.',
+    'Week 2: add dumbbells to squats. Wall sit to 45 s.',
     'Week 3: swap the glute bridge for single-leg bridges, and hold dumbbells for the reverse lunges.',
     'Week 4: add slow single-leg lowers to a chair (4 seconds down on one leg, stand up with both), 3 × 6 per leg.'
   ],
@@ -351,16 +331,14 @@ var KNEE = {
       {id:'k4', name:'Wall calf stretch', target:'Calf', dose:'2 × 30 s per side', how:'Hands on a wall, one leg back with the knee straight and the heel pressed down. Lean in until the calf stretches.', media:Pv('p_calf',640,480,'FitnessBlender', V('calfstretch')), timer:{opts:[30], hint:'Repeat for each side and each set.'}}
     ]},
     {title:'Strength', items:[
-      {id:'k5', name:'Wall sit', dose:'4 × 30–45 s', how:'Back flat against the wall, slide down until the knees bend to about 60°, not a deep squat. Press the lower back into the wall and hold.', media:I('wallsit',640,480,'The photo shows the position. The ball is not needed.'), timer:{opts:[30,45], byWeek:[30,45,45,45], hint:'Repeat for each set.'}},
-      {id:'k6', name:'Squat to a chair', dose:'3 × 10–12', how:'Take 3 seconds to lower, touch the chair lightly, then stand. Keep the knees in line with the toes.', media:V('squat',640,480,'Place a chair behind you and touch it lightly at the bottom.'), weeks:{2:'Week 2: add dumbbells to squats and deadlifts.',3:'Keep the dumbbells from week 2.',4:'Keep the dumbbells from week 2.'}},
-      {id:'k6b', onlyWeek:4, name:'Slow single-leg lowers to a chair', dose:'3 × 6 per leg', how:'4 seconds down on one leg, stand up with both.', media:V('squat',640,480,'The video shows the two-leg version. In this one you lower on one leg, then stand up with both.'), weeks:{4:'Week 4: added this week.'}},
-      {id:'k7', name:'Glute bridge', dose:'3 × 12', how:'Tuck the tailbone, then lift the hips until shoulders, hips and knees line up. Squeeze the glutes for 2 s at the top. Do not push higher.', media:V('bridge',640,480,'The band around the thighs in the video is optional.'), weeks:{3:'Week 3: swap the glute bridge for single-leg bridges.',4:'Keep the single-leg bridges from week 3.'}},
-      {id:'k8', name:'Romanian deadlift', dose:'3 × 10', how:'Soft knees and a flat back. Push the hips straight back and lower the weights along your legs to about knee height, then stand. No weight in week 1.', media:V('rdl',640,480,'The video shows dumbbells, which you add from week 2.'), weeks:{2:'Week 2: add dumbbells to squats and deadlifts.',3:'Keep the dumbbells from week 2.',4:'Keep the dumbbells from week 2.'}},
-      {id:'k9', name:'Hamstring walkout', dose:'3 × 6–8', how:'From a glute bridge, walk the heels out in small steps and back in. Keep the hips lifted and level, and go only as far as you can control.', media:S('walkout')},
-      {id:'k10', name:'Reverse lunge holding a chair', dose:'3 × 8 per leg', how:'Hold a chair for balance. Take a short step back, lower slowly to a pain-free depth, then push through the front heel to stand.', media:V('lunge',640,480,'The video shows the step back and stand up. Hold a chair for balance as described.'), weeks:{3:'Week 3: hold dumbbells for the reverse lunges.',4:'Keep the dumbbells from week 3.'}},
-      {id:'k11', name:'Band knee straightening', dose:'2 × 15 per leg', how:'Anchor a band in front of you and loop it behind the knee. Start slightly bent, then straighten the knee fully against the band and squeeze the thigh. Left leg especially.', media:S('tke')},
+      {id:'k5', name:'Wall sit', dose:'4 × 30–45 s', how:'Back flat against the wall, slide down until the knees bend to about 60°, not a deep squat. Press the lower back into the wall and hold.', media:Pv('p_wallsit',540,810,'VIGEO', I('wallsit',640,480,'The photo shows the position. The ball is not needed.')), timer:{opts:[30,45], byWeek:[30,45,45,45], hint:'Repeat for each set.'}},
+      {id:'k6', name:'Squat to a chair', dose:'3 × 10–12', how:'Take 3 seconds to lower, touch the chair lightly, then stand. Keep the knees in line with the toes.', media:Pv('p_squat',640,480,'CAF Fitness', V('squat',640,480,'Place a chair behind you and touch it lightly at the bottom.')), weeks:{2:'Week 2: add dumbbells to squats.',3:'Keep the dumbbells from week 2.',4:'Keep the dumbbells from week 2.'}},
+      {id:'k6b', onlyWeek:4, name:'Slow single-leg lowers to a chair', dose:'3 × 6 per leg', how:'4 seconds down on one leg, stand up with both.', media:Pv('p_squat',640,480,'CAF Fitness', V('squat',640,480,'The video shows the two-leg version. In this one you lower on one leg, then stand up with both.'), 'The clip shows the two-leg version. In this one you lower on one leg, then stand up with both.'), weeks:{4:'Week 4: added this week.'}},
+      {id:'k7', name:'Glute bridge', dose:'3 × 12', how:'Tuck the tailbone, then lift the hips until shoulders, hips and knees line up. Squeeze the glutes for 2 s at the top. Do not push higher.', media:Pv('p_bridge',640,360,'Hinge Health', V('bridge',640,480,'The band around the thighs in the video is optional.')), weeks:{3:'Week 3: swap the glute bridge for single-leg bridges.',4:'Keep the single-leg bridges from week 3.'}},
+      {id:'k9', name:'Hamstring walkout', dose:'3 × 6–8', how:'From a glute bridge, walk the heels out in small steps and back in. Keep the hips lifted and level, and go only as far as you can control.', media:Pv('p_walkout',640,360,'Daily Workout Builder', S('walkout'))},
+      {id:'k10', name:'Reverse lunge holding a chair', dose:'3 × 8 per leg', how:'Hold a chair for balance. Take a short step back, lower slowly to a pain-free depth, then push through the front heel to stand.', media:Pv('p_lunge',640,480,'Body By Finn Fitness', V('lunge',640,480,'The video shows the step back and stand up. Hold a chair for balance as described.')), weeks:{3:'Week 3: hold dumbbells for the reverse lunges.',4:'Keep the dumbbells from week 3.'}},
       {id:'k12', name:'Calf raises', dose:'3 × 15', how:'Rise onto your toes, pause, and lower slowly. Hold a wall for balance.', media:V('calfraise',640,480,'Shown on a step. On the floor, rise and lower the same way.')},
-      {id:'k13', name:'Star excursion balance (star taps)', dose:'2 rounds per leg', how:'Stand on one leg with a soft knee, holding a chair if you need it. With the other foot, reach out and lightly tap the floor in front, to the side and behind, like the points of a star, coming back to the middle after each tap. Keep the standing knee in line with the toes and reach only as far as you can control.', media:V('startaps',640,480,'The video shows the forward reaches. Tap all the points on the star below, and keep the standing knee only slightly bent. Do not squat deep.'), extra:'star'}
+      {id:'k13', name:'Star excursion balance (star taps)', dose:'2 rounds per leg', how:'Stand on one leg with a soft knee, holding a chair if you need it. With the other foot, reach out and lightly tap the floor in front, to the side and behind, like the points of a star, coming back to the middle after each tap. Keep the standing knee in line with the toes and reach only as far as you can control.', media:Pv('p_star',640,480,'Rehab My Patient', V('startaps',640,480,'The video shows the forward reaches. Tap all the points on the star below, and keep the standing knee only slightly bent. Do not squat deep.')), extra:'star'}
     ]}
   ]
 };
@@ -398,7 +376,7 @@ var HABITS = [
 
 var SAFETY = [
   ['Knee pain rule','Mild discomfort, up to 3 out of 10, that settles within 24 hours is fine. Sharp pain, swelling, or the knee giving way means stop that exercise and go back a week. Show this plan to your physiotherapist before adding weight, and hold off on jumping, running and deep squats until they clear you.'],
-  ['Protect your lower back','In the Romanian deadlift, glute bridge and hamstring walkout, keep your ribs down and tailbone slightly tucked so the lower back does not arch. Sharp or pinching back pain, or pain travelling down a leg, means stop and get it checked.'],
+  ['Protect your lower back','In the glute bridge and hamstring walkout, keep your ribs down and tailbone slightly tucked so the lower back does not arch. Sharp or pinching back pain, or pain travelling down a leg, means stop and get it checked.'],
   ['Hamstrings and pelvic tilt','With anterior pelvic tilt, hamstrings often feel tight because they are already stretched long. Keep hamstring stretching gentle and put the effort into hip flexor and quad stretching plus glute and core strength.'],
   ['What to expect','Thirty days is enough to reduce tightness, build the habit and get stronger. Fully correcting posture and finishing tendon rehab usually takes 8–12 weeks, so repeat the program with heavier loads afterwards.']
 ];
@@ -408,7 +386,13 @@ var YT_CREDITS = [
   ['Lying hamstring stretch','SHRP Training','https://www.youtube.com/shorts/yrGLCjsPJ6E'],
   ['Butterfly stretch','BODi','https://www.youtube.com/shorts/dF2olILOtjM'],
   ['Seated glute stretch','Kinesis Integrated','https://www.youtube.com/shorts/rHuiDKUEL_4'],
-  ['Wall calf stretch','FitnessBlender','https://www.youtube.com/watch?v=f1HzSAuB-Vw']
+  ['Wall calf stretch','FitnessBlender','https://www.youtube.com/watch?v=f1HzSAuB-Vw'],
+  ['Wall sit','VIGEO','https://www.youtube.com/shorts/i5mzUfWL96Q'],
+  ['Squat to a chair','CAF Fitness','https://www.youtube.com/watch?v=gST_9kPV9q4'],
+  ['Glute bridge','Hinge Health','https://www.youtube.com/watch?v=PhTDzR0TpZs'],
+  ['Hamstring walkout','Daily Workout Builder','https://www.youtube.com/shorts/YOnrl0Ar6D4'],
+  ['Reverse lunge holding a chair','Body By Finn Fitness','https://www.youtube.com/watch?v=NuSAOvrwHbE'],
+  ['Star excursion balance','Rehab My Patient','https://www.youtube.com/watch?v=UoMSMdMKfBY']
 ];
 var CREDITS = [
   ['Butterfly stretch (offline clip)','Mikhail Nilov','https://www.pexels.com/video/7500537/'],
@@ -419,7 +403,6 @@ var CREDITS = [
   ['Wall sit (photo)','Mikhail Nilov','https://www.pexels.com/photo/6740055/'],
   ['Squat','MART PRODUCTION','https://www.pexels.com/video/8837118/'],
   ['Glute bridge','Polina Tankilevitch','https://www.pexels.com/video/6525487/'],
-  ['Romanian deadlift','Amar Preciado','https://www.pexels.com/video/11121740/'],
   ['Reverse lunge','Polina Tankilevitch','https://www.pexels.com/video/6525491/'],
   ['Calf raises','Gaurav Kumar','https://www.pexels.com/video/32115656/'],
   ['Half-kneeling hip flexor stretch (photo)','Yazid N','https://www.pexels.com/photo/40139104/'],
@@ -518,12 +501,13 @@ function timerHTML(it, week){
 function cardHTML(it, idx, day, week){
   var st = load(), ticked = !!(st.ticks[day] && st.ticks[day][it.id]);
   var wk = it.weeks && it.weeks[week] ? '<p class="wk">'+esc(it.weeks[week])+'</p>' : '';
+  var shown = it.media.type === 'priv' && !privKey ? it.media.fallback : it.media;
   return '<article class="ex'+(ticked?' ticked':'')+'" id="ex-'+it.id+'">'+mediaHTML(it.media, it.name)+
     '<div class="ex-body"><div class="ex-top"><span class="num">'+idx+'</span><h3>'+esc(it.name)+'</h3></div>'+
     '<span class="dose">'+esc(it.dose)+'</span>'+
     (it.target ? '<p class="target"><b>Targets:</b> '+esc(it.target)+'</p>' : '')+wk+
     '<p class="how">'+esc(it.how)+'</p>'+
-    (it.media.note ? '<p class="vnote">'+esc(it.media.note)+'</p>' : '')+
+    (shown.note ? '<p class="vnote">'+esc(shown.note)+'</p>' : '')+
     (it.media.type === 'priv' ? (privKey
       ? '<p class="vnote">Your private clip, from a video by '+esc(it.media.by)+' on YouTube.</p>'
       : '<p class="vnote">Your private clip is locked, so this is a free clip. Unlock it in the box at the top of the stretches.</p>') : '')+
@@ -602,7 +586,7 @@ function viewSafety(){
     YT_CREDITS.map(function(c){ return '<li>'+esc(c[0])+': <a href="'+c[2]+'" target="_blank" rel="noopener">'+esc(c[1])+'</a></li>'; }).join('')+
     '</ul><p class="muted" style="margin-top:12px">The other videos and photos are from Pexels and free to use. Thank you to:</p><ul class="plain credits">'+
     CREDITS.map(function(c){ return '<li>'+esc(c[0])+': <a href="'+c[2]+'" target="_blank" rel="noopener">'+esc(c[1])+'</a></li>'; }).join('')+
-    '</ul><p class="muted" style="margin-top:12px">The hamstring walkout, band knee straightening and chin tuck are drawn illustrations, because no free photo of those moves was available. The star diagram is drawn too.</p></div>';
+    '</ul><p class="muted" style="margin-top:12px">The chin tuck is a drawn illustration, and so is the hamstring walkout while your clips are locked, because no free photo of those moves was available. The star diagram is drawn too.</p></div>';
 }
 
 /* ---------- router ---------- */
