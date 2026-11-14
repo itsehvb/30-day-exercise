@@ -151,11 +151,11 @@ a{color:var(--accent-ink)}
 .fig .lbl{fill:var(--muted);font:600 16px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 .extra{margin:0 0 10px;border-radius:12px;overflow:hidden}
 .extra svg{display:block;width:100%;height:auto}
-.media.yt{background:#000;overflow:hidden}
-.media.yt img{display:block;width:100%;height:100%;object-fit:cover}
-.media.yt iframe{display:block;width:100%;height:100%;border:0}
-.ytplay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:72px;height:72px;border-radius:50%;background:rgba(15,18,20,.78);color:#fff;display:grid;place-items:center;font-size:30px;padding-left:5px;pointer-events:none}
-.media.yt .msg{position:absolute;inset:0;display:grid;place-items:center;padding:16px;text-align:center;color:#fff;font-weight:600}
+.media.yt{position:relative;overflow:hidden;background:var(--media)}
+.media.yt img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:saturate(.85)}
+.media.yt iframe,.media.yt .ytslot{position:absolute;border:0;display:block;pointer-events:none}
+.media.yt .pill{z-index:2}
+.media.yt.ytlive img{display:none}
 .fig .pr{stroke:var(--prop);fill:none;stroke-linecap:round;stroke-linejoin:round}
 .fig .prf{fill:var(--prop)}
 .fig .ar{stroke:var(--accent);fill:none;stroke-width:5;stroke-linecap:round}
@@ -326,7 +326,8 @@ var SVG = {
 function V(name, w, h, note){ return {type:'video', src:'images/'+name+'.mp4', poster:'images/'+name+'.jpg', w:w||640, h:h||480, note:note}; }
 function I(name, w, h, note){ return {type:'img', src:'images/'+name+'.jpg', w:w||640, h:h||480, note:note}; }
 function S(name){ return {type:'svg', svg:name}; }
-function Y(id, ratio, by, fallback){ return {type:'yt', id:id, ratio:ratio, by:by, fallback:fallback}; }
+/* YouTube clip: plays only the exercise part (start–end seconds), muted and looping, cropped to the box */
+function Y(id, o, by, fallback){ return {type:'yt', id:id, o:o, by:by, fallback:fallback}; }
 
 /* ---------- program (exercise text exactly as written) ---------- */
 var KNEE = {
@@ -340,11 +341,11 @@ var KNEE = {
   ],
   sections:[
     {title:'Stretches (10 min)', items:[
-      {id:'k2', name:'Side-lying quad stretch', target:'Front of the thigh (quads)', dose:'2 × 30 s per side', how:'Lie on your side, bend the top knee and pull the heel toward your glute. Push the hips slightly forward and keep the back flat.', media:Y('nUoSkE8eJO8','4 / 3','Dynamic Cyclist', S('sidequad')), timer:{opts:[30], hint:'Repeat for each side and each set.'}},
-      {id:'k3', name:'Lying hamstring stretch', target:'Back of the thigh (hamstrings)', dose:'2 × 30 s per side', how:'On your back, loop a towel or band around one foot. Raise that leg with the knee nearly straight until you feel a gentle pull behind the thigh.', media:Y('yrGLCjsPJ6E','3 / 4','SHRP Training', V('hamstring')), timer:{opts:[30], hint:'Repeat for each side and each set.'}},
+      {id:'k2', name:'Side-lying quad stretch', target:'Front of the thigh (quads)', dose:'2 × 30 s per side', how:'Lie on your side, bend the top knee and pull the heel toward your glute. Push the hips slightly forward and keep the back flat.', media:Y('nUoSkE8eJO8',{box:'16 / 9', va:1, start:10.2, end:16.0, fy:0.78, z:1.15},'Dynamic Cyclist', S('sidequad')), timer:{opts:[30], hint:'Repeat for each side and each set.'}},
+      {id:'k3', name:'Lying hamstring stretch', target:'Back of the thigh (hamstrings)', dose:'2 × 30 s per side', how:'On your back, loop a towel or band around one foot. Raise that leg with the knee nearly straight until you feel a gentle pull behind the thigh.', media:Y('yrGLCjsPJ6E',{box:'4 / 3', va:0.5625, start:1.0, end:13.5, fy:0.57},'SHRP Training', V('hamstring')), timer:{opts:[30], hint:'Repeat for each side and each set.'}},
       {id:'k3b', onlyWeek:1, name:'Butterfly stretch', target:'Inner thigh (adductors)', dose:'2 × 30 s', how:'Sit tall with the soles of your feet together and hold your ankles. Let the knees fall out to the sides and lean slightly forward from the hips until you feel a gentle stretch in the inner thighs. Do not push the knees down. If the left knee feels strained, slide the feet further away from you.', media:V('butterfly'), weeks:{1:'Week 1 extra: stretches the inner thigh.'}, timer:{opts:[30], hint:'Repeat for each set.'}},
       {id:'k3c', onlyWeek:1, name:'Seated glute stretch (knee across)', target:'Outer hip and buttock (glutes)', dose:'2 × 30 s per side', how:'Sit with both legs straight. Bend one knee and place that foot flat on the floor on the outside of the other knee. Sit tall and hug the bent knee toward the opposite shoulder until you feel a stretch in the buttock and outer hip.', media:V('glutestretch'), weeks:{1:'Week 1 extra: stretches the outer hip and buttock.'}, timer:{opts:[30], hint:'Repeat for each side and each set.'}},
-      {id:'k4', name:'Wall calf stretch', target:'Calf', dose:'2 × 30 s per side', how:'Hands on a wall, one leg back with the knee straight and the heel pressed down. Lean in until the calf stretches.', media:Y('f1HzSAuB-Vw','16 / 9','FitnessBlender', V('calfstretch')), timer:{opts:[30], hint:'Repeat for each side and each set.'}}
+      {id:'k4', name:'Wall calf stretch', target:'Calf', dose:'2 × 30 s per side', how:'Hands on a wall, one leg back with the knee straight and the heel pressed down. Lean in until the calf stretches.', media:Y('f1HzSAuB-Vw',{box:'4 / 3', va:1.7778, start:2.8, end:9.2, fx:0.6, z:1.04},'FitnessBlender', V('calfstretch')), timer:{opts:[30], hint:'Repeat for each side and each set.'}}
     ]},
     {title:'Strength', items:[
       {id:'k5', name:'Wall sit', dose:'4 × 30–45 s', how:'Back flat against the wall, slide down until the knees bend to about 60°, not a deep squat. Press the lower back into the wall and hold.', media:I('wallsit',640,480,'The photo shows the position. The ball is not needed.'), timer:{opts:[30,45], byWeek:[30,45,45,45], hint:'Repeat for each set.'}},
@@ -489,11 +490,12 @@ function viewCalendar(){
     '</div>';
 }
 
-function ytSrc(id){ return 'https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&mute=1&loop=1&playlist='+id+'&playsinline=1&rel=0&modestbranding=1'; }
 function mediaHTML(m, name){
   if (m.type === 'yt') {
-    if (navigator.onLine === false && m.fallback) return mediaHTML(m.fallback, name) + '<p class="vnote" style="margin:10px 16px 0">You are offline, so this is the saved clip. Connect to the internet to see the YouTube video.</p>';
-    return '<div class="media yt" style="aspect-ratio:'+m.ratio+'" data-yt="'+m.id+'" data-title="'+esc(name)+'"><img src="https://i.ytimg.com/vi/'+m.id+'/hqdefault.jpg" alt="" loading="lazy" onerror="this.remove()"><span class="ytplay" aria-hidden="true">▶</span><span class="pill">Tap to play · YouTube</span></div>';
+    if (navigator.onLine === false && m.fallback) return mediaHTML(m.fallback, name) + '<p class="vnote" style="margin:10px 16px 0">You are offline, so this is the saved version. Connect to the internet to see the YouTube clip.</p>';
+    var o = m.o;
+    return '<div class="media yt" style="aspect-ratio:'+o.box+'" data-yt="'+m.id+'" data-start="'+o.start+'" data-end="'+o.end+'" data-va="'+o.va+'" data-fx="'+(o.fx||0.5)+'" data-fy="'+(o.fy||0.5)+'" data-z="'+(o.z||1)+'" aria-label="'+esc(name)+' — looping video clip">'+
+      '<img src="https://i.ytimg.com/vi/'+m.id+'/hqdefault.jpg" alt="" loading="lazy" onerror="this.remove()"><span class="pill">Loading clip…</span></div>';
   }
   if (m.type === 'svg') return '<div class="media">'+SVG[m.svg]()+'</div>';
   if (m.type === 'img') return '<div class="media"><img src="'+m.src+'" width="'+m.w+'" height="'+m.h+'" alt="'+esc(name)+' — photo" loading="lazy"><span class="pill still">Photo</span></div>';
@@ -517,7 +519,7 @@ function cardHTML(it, idx, day, week){
     (it.target ? '<p class="target"><b>Targets:</b> '+esc(it.target)+'</p>' : '')+wk+
     '<p class="how">'+esc(it.how)+'</p>'+
     (it.media.note ? '<p class="vnote">'+esc(it.media.note)+'</p>' : '')+
-    (it.media.type === 'yt' ? '<p class="vnote">Video by '+esc(it.media.by)+' on YouTube. Needs internet; offline you see a saved version instead.</p>' : '')+
+    (it.media.type === 'yt' ? '<p class="vnote">Loops just the exercise part of a video by '+esc(it.media.by)+' on YouTube. Needs internet; offline you see a saved version instead.</p>' : '')+
     (it.extra ? '<div class="extra">'+SVG[it.extra]()+'</div>' : '')+
     (it.timer ? timerHTML(it, week) : '')+
     '<label class="tick'+(ticked?' on':'')+'"><input type="checkbox" data-tick="'+it.id+'"'+(ticked?' checked':'')+'> <span>Done</span></label>'+
@@ -571,7 +573,7 @@ function viewHabits(){
 function viewSafety(){
   return '<div class="safety t-knee"><h1>Safety</h1>'+
     SAFETY.map(function(s){ return '<section><h2>'+esc(s[0])+'</h2><p style="margin:0">'+esc(s[1])+'</p></section>'; }).join('')+
-    '<h2>Photo and video credits</h2><p class="muted">These YouTube videos are shown with YouTube’s own player and need internet:</p><ul class="plain credits">'+
+    '<h2>Photo and video credits</h2><p class="muted">The exercise part of these YouTube videos plays in YouTube’s own player (muted, looping), so it needs internet:</p><ul class="plain credits">'+
     YT_CREDITS.map(function(c){ return '<li>'+esc(c[0])+': <a href="'+c[2]+'" target="_blank" rel="noopener">'+esc(c[1])+'</a></li>'; }).join('')+
     '</ul><p class="muted" style="margin-top:12px">The other videos and photos are from Pexels and free to use. Thank you to:</p><ul class="plain credits">'+
     CREDITS.map(function(c){ return '<li>'+esc(c[0])+': <a href="'+c[2]+'" target="_blank" rel="noopener">'+esc(c[1])+'</a></li>'; }).join('')+
@@ -601,23 +603,83 @@ var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: red
 var io = null;
 function setPill(box, playing){ var p = box.querySelector('.pill'); if (p) p.textContent = playing ? '❚❚ Tap to pause' : '▶ Tap to play'; }
 function playV(v){ v.muted = true; var pr = v.play(); if (pr && pr.catch) pr.catch(function(){ setPill(v.parentNode, false); }); }
+/* ---------- YouTube clips: loop only the exercise part, muted, no controls ---------- */
+var ytApi = null, ytPlayers = new Map();
+function loadYT(){
+  if (ytApi) return ytApi;
+  ytApi = new Promise(function(res, rej){
+    if (window.YT && window.YT.Player) return res(window.YT);
+    window.onYouTubeIframeAPIReady = function(){ res(window.YT); };
+    var s = document.createElement('script'); s.src = 'https://www.youtube.com/iframe_api'; s.async = true;
+    s.onerror = function(){ ytApi = null; rej(new Error('YouTube unavailable')); };
+    document.head.appendChild(s);
+  });
+  return ytApi;
+}
+function sizeYT(box){
+  var f = box.querySelector('iframe, .ytslot'); if (!f) return;
+  var W = box.clientWidth, H = box.clientHeight, va = +box.dataset.va || 16/9, z = +box.dataset.z || 1, iw, ih;
+  if (W / H > va) { iw = W; ih = W / va; } else { ih = H; iw = H * va; }
+  iw *= z; ih *= z;
+  f.style.width = iw + 'px'; f.style.height = ih + 'px';
+  f.style.left = ((W - iw) * (+box.dataset.fx)) + 'px'; f.style.top = ((H - ih) * (+box.dataset.fy)) + 'px';
+}
+function ytStart(box){
+  var rec = ytPlayers.get(box);
+  if (rec) { rec.want = true; if (rec.ready) rec.p.playVideo(); return; }
+  if (navigator.onLine === false) return;
+  rec = {p:null, ready:false, want:true, playing:false, iv:null}; ytPlayers.set(box, rec);
+  var s = +box.dataset.start, e = +box.dataset.end;
+  loadYT().then(function(YT){
+    if (!box.isConnected) { ytPlayers.delete(box); return; }
+    var slot = document.createElement('div'); slot.className = 'ytslot'; box.appendChild(slot); sizeYT(box);
+    rec.p = new YT.Player(slot, {
+      host: 'https://www.youtube-nocookie.com', videoId: box.dataset.yt,
+      playerVars: {autoplay:1, mute:1, controls:0, disablekb:1, fs:0, iv_load_policy:3, modestbranding:1, playsinline:1, rel:0, cc_load_policy:0, start:Math.floor(s)},
+      events: {
+        onReady: function(ev){ rec.ready = true; sizeYT(box); ev.target.mute(); ev.target.seekTo(s, true); if (rec.want) ev.target.playVideo(); else ev.target.pauseVideo(); },
+        onStateChange: function(ev){
+          if (ev.data === YT.PlayerState.PLAYING) {
+            rec.playing = true; box.classList.add('ytlive'); setPill(box, true);
+            if (!rec.ccOff) { rec.ccOff = true; try { ev.target.unloadModule('captions'); ev.target.unloadModule('cc'); } catch(_) {} }
+          }
+          else if (ev.data === YT.PlayerState.PAUSED) { rec.playing = false; setPill(box, false); }
+          else if (ev.data === YT.PlayerState.ENDED) { ev.target.seekTo(s, true); ev.target.playVideo(); }
+        }
+      }
+    });
+    /* jump back to the start of the exercise part, so it loops like a GIF */
+    rec.iv = setInterval(function(){
+      if (!box.isConnected) { clearInterval(rec.iv); try { rec.p.destroy(); } catch(_) {} ytPlayers.delete(box); return; }
+      try { var t = rec.ready && rec.p.getCurrentTime(); if (t && (t >= e || t < s - 0.5)) rec.p.seekTo(s, true); } catch(_) {}
+    }, 150);
+  }).catch(function(){ ytPlayers.delete(box); var p = box.querySelector('.pill'); if (p) p.textContent = 'Clip needs internet'; });
+}
+function ytPause(box){ var rec = ytPlayers.get(box); if (rec) { rec.want = false; if (rec.ready) rec.p.pauseVideo(); } }
+window.addEventListener('resize', function(){ app.querySelectorAll('.media.yt').forEach(sizeYT); });
+
 function setupVideos(){
   if (io) io.disconnect();
+  var yts = app.querySelectorAll('[data-yt]');
   var boxes = app.querySelectorAll('[data-video]');
   boxes.forEach(function(box){
     var v = box.querySelector('video');
     v.addEventListener('play', function(){ setPill(box, true); });
     v.addEventListener('pause', function(){ setPill(box, false); });
   });
+  yts.forEach(function(box){ var p = box.querySelector('.pill'); if (p && (reduceMotion || !('IntersectionObserver' in window))) p.textContent = '▶ Tap to play'; });
   if (reduceMotion || !('IntersectionObserver' in window)) return;
   io = new IntersectionObserver(function(entries){
     entries.forEach(function(e){
-      var v = e.target.querySelector('video'), box = e.target;
+      var box = e.target, on = e.isIntersecting && e.intersectionRatio >= 0.5;
       if (box.dataset.userPaused) return;
-      if (e.isIntersecting && e.intersectionRatio >= 0.5) playV(v); else if (!v.paused) v.pause();
+      if (box.hasAttribute('data-yt')) { if (on) ytStart(box); else ytPause(box); return; }
+      var v = box.querySelector('video');
+      if (on) playV(v); else if (!v.paused) v.pause();
     });
   }, {threshold:[0, 0.5]});
   boxes.forEach(function(b){ io.observe(b); });
+  yts.forEach(function(b){ io.observe(b); });
 }
 
 /* ---------- timer ---------- */
@@ -689,9 +751,9 @@ document.addEventListener('click', function(e){
     return;
   }
   if ((el = e.target.closest('[data-yt]'))) {
-    if (el.querySelector('iframe')) return;
-    if (navigator.onLine === false) { el.insertAdjacentHTML('beforeend', '<div class="msg">You are offline. Connect to the internet to play this video.</div>'); return; }
-    el.innerHTML = '<iframe src="'+ytSrc(el.dataset.yt)+'" title="'+esc(el.dataset.title)+' (YouTube video)" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>';
+    var rec = ytPlayers.get(el);
+    if (rec && rec.playing) { el.dataset.userPaused = '1'; ytPause(el); }
+    else { delete el.dataset.userPaused; ytStart(el); }
     return;
   }
   if ((el = e.target.closest('[data-video]'))) {
