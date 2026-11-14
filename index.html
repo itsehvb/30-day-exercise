@@ -68,7 +68,6 @@ a{color:var(--accent-ink)}
 .sched{list-style:none;margin:0;padding:0;display:grid;gap:8px}
 .sched li{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);border-left:6px solid var(--accent);border-radius:12px;padding:10px 14px}
 .sched .dn{font-weight:750;min-width:62px}
-.sched .wd{margin-left:auto;color:var(--muted)}
 
 /* calendar */
 .legend{display:flex;gap:16px;flex-wrap:wrap}
@@ -83,6 +82,10 @@ a{color:var(--accent-ink)}
 .day.done{background:var(--accent-soft)}
 .day.done::after{content:"✓";position:absolute;top:4px;right:8px;font-weight:800;font-size:20px;color:var(--accent-ink)}
 .day.is-today{box-shadow:0 0 0 3px var(--ink)}
+.day.locked{background:transparent;border-style:dashed;border-top-style:solid}
+.day.locked .n,.day.locked .l{color:var(--muted)}
+.day.locked::after{content:"🔒";position:absolute;top:6px;right:8px;font-size:15px}
+.donenote{margin:0;padding:12px 14px;border-radius:12px;background:var(--accent-soft);color:var(--accent-ink);font-weight:700;text-align:center}
 .field{display:flex;flex-direction:column;gap:6px}
 .field input{font:inherit;min-height:52px;padding:8px 12px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--ink);max-width:260px}
 
@@ -195,7 +198,8 @@ function load(){
   try { s = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e) {}
   mem = s && typeof s === 'object' ? s : {};
   mem.done = mem.done || {}; mem.ticks = mem.ticks || {}; mem.habits = mem.habits || {};
-  if (!mem.start) { mem.start = isoDate(new Date()); save(); }
+  /* days now open one after another from day 1; older date-based progress starts over once */
+  if (mem.seq !== 1) { mem.done = {}; mem.ticks = {}; delete mem.start; mem.seq = 1; save(); }
   return mem;
 }
 function save(){ try { localStorage.setItem(KEY, JSON.stringify(mem)); } catch(e) {} }
@@ -203,16 +207,14 @@ function save(){ try { localStorage.setItem(KEY, JSON.stringify(mem)); } catch(e
 /* ---------- dates ---------- */
 function isoDate(d){ var m = d.getMonth()+1, day = d.getDate(); return d.getFullYear()+'-'+(m<10?'0':'')+m+'-'+(day<10?'0':'')+day; }
 function parseISO(s){ var p = String(s||'').split('-').map(Number); if (p.length<3 || !p[0]) return null; return new Date(p[0], p[1]-1, p[2]); }
-function addDays(d, n){ var x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate()+n); return x; }
-function dayNumberToday(){
-  var st = parseISO(load().start) || new Date();
-  var t = new Date(); t = new Date(t.getFullYear(), t.getMonth(), t.getDate());
-  return Math.round((t - st) / 864e5) + 1;
-}
 var WD = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 function fmt(d){ return WD[d.getDay()]+' '+d.getDate()+' '+MON[d.getMonth()]; }
-function dateOfDay(n){ return addDays(parseISO(load().start) || new Date(), n-1); }
+
+/* ---------- progress: each day opens when the day before is done ---------- */
+function currentDay(){ var d = load().done; for (var n=1; n<=30; n++) if (!d[n]) return n; return 31; }
+function isOpen(n){ return n <= 1 || !!load().done[n-1]; }
+function doneDate(n){ var v = load().done[n]; return typeof v === 'string' ? parseISO(v) : null; }
 
 /* ---------- schedule ---------- */
 function dayType(n){
@@ -446,50 +448,52 @@ function chipLabel(s){ return s >= 60 ? (s % 60 ? fmtSecs(s) : (s/60)+' min') : 
 var app = document.getElementById('app');
 
 function viewToday(){
-  var st = load(), n = dayNumberToday(), doneCount = Object.keys(st.done).filter(function(k){ return st.done[k]; }).length;
+  var st = load(), n = currentDay(), doneCount = Object.keys(st.done).filter(function(k){ return st.done[k]; }).length;
   var todayBlock;
-  if (n < 1) {
-    todayBlock = '<div class="card today t-knee"><div class="eyebrow">Not started yet</div><div class="big">Day 1 is '+fmt(dateOfDay(1))+'</div><p class="muted">You can change the start date in the calendar.</p><a class="btn primary block" href="#/day/1">Preview day 1</a></div>';
-  } else if (n > 30) {
-    todayBlock = '<div class="card today t-knee"><div class="eyebrow">Program complete</div><div class="big">You reached day 30</div><p class="muted">Repeat the program with heavier loads, or open any day from the calendar.</p><a class="btn primary block" href="#/calendar">Open calendar</a></div>';
+  if (n > 30) {
+    todayBlock = '<div class="card today t-knee"><div class="eyebrow">Program complete</div><div class="big">You finished all 30 days</div><p class="muted">Repeat the program with heavier loads, or open any day from the calendar.</p><a class="btn primary block" href="#/calendar">Open calendar</a></div>';
   } else {
     var t = dayType(n), cls = 't-'+t, plan = planFor(t);
     var sub = plan ? plan.title+' · '+plan.minutes : 'Rest, or an easy 20–30 minute walk';
-    todayBlock = '<div class="card today '+cls+'"><div class="eyebrow">Today · '+fmt(new Date())+'</div><div class="big">Day '+n+' of 30 · Week '+weekOf(n)+'</div><p class="muted" style="margin-bottom:14px">'+esc(sub)+(st.done[n]?' · ✓ done':'')+'</p><a class="btn primary block" href="#/day/'+n+'">Today</a></div>';
+    var prev = n > 1 ? doneDate(n-1) : null;
+    var note = n === 1 ? 'Start here. Each day opens when you finish the day before.'
+      : (prev && isoDate(prev) === isoDate(new Date()) ? 'You finished day '+(n-1)+' today, so day '+n+' is open.' : 'Day '+(n-1)+' is done, so day '+n+' is open.');
+    todayBlock = '<div class="card today '+cls+'"><div class="eyebrow">Your next day</div><div class="big">Day '+n+' of 30 · Week '+weekOf(n)+'</div><p class="muted" style="margin-bottom:4px">'+esc(sub)+'</p><p class="muted" style="margin-bottom:14px">'+esc(note)+'</p><a class="btn primary block" href="#/day/'+n+'">Open day '+n+'</a></div>';
   }
   var sched = '';
   for (var d=1; d<=7; d++){
     var ty = dayType(d), pl = planFor(ty);
-    sched += '<li class="t-'+ty+'"><span class="dn">Day '+d+'</span><span>'+(pl ? '<b>'+pl.title+'</b> · '+pl.minutes : '<b>Rest</b>, or an easy 20–30 minute walk')+'</span><span class="wd">'+WD[dateOfDay(d).getDay()]+'</span></li>';
+    sched += '<li class="t-'+ty+'"><span class="dn">Day '+d+'</span><span>'+(pl ? '<b>'+pl.title+'</b> · '+pl.minutes : '<b>Rest</b>, or an easy 20–30 minute walk')+'</span></li>';
   }
   return '<div class="hero"><h1>30-Day Knee &amp; Posture Program</h1><p class="muted">Strengthen the left knee and fix your posture at home, one short guided session a day.</p></div>'+
     todayBlock+
     '<div class="card" style="margin-top:12px"><div class="row" style="justify-content:space-between;margin-bottom:8px"><b>Progress</b><span class="muted">'+doneCount+' of 30 days done</span></div><div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="30" aria-valuenow="'+doneCount+'"><span style="width:'+(doneCount/30*100).toFixed(1)+'%"></span></div></div>'+
     '<h2>Weekly schedule</h2><ul class="sched">'+sched+'</ul>'+
-    '<p class="muted" style="margin-top:12px">Repeat for 4 weeks (days 1–28). Day 29 is a knee day, day 30 is a posture day.</p>';
+    '<p class="muted" style="margin-top:12px">Repeat for 4 weeks (days 1–28). Day 29 is a knee day, day 30 is a posture day. Each day opens when you finish the day before, so a missed day simply waits for you.</p>';
 }
 
 function viewCalendar(){
-  var st = load(), today = dayNumberToday(), html = '';
+  var st = load(), cur = currentDay(), html = '', doneCount = 0;
   for (var w=0; w<5; w++){
     var from = w*7+1, to = Math.min(30, w*7+7);
     html += '<div class="week"><h3>'+(w<4 ? 'Week '+(w+1) : 'Days 29–30 (week 4 progression)')+'</h3><div class="cal">';
     for (var n=from; n<=to; n++){
-      var t = dayType(n);
-      html += '<button type="button" class="day t-'+t+(st.done[n]?' done':'')+(n===today?' is-today':'')+'" data-go="'+n+'" aria-label="Day '+n+', '+TYPE_LABEL[t]+(st.done[n]?', done':'')+(n===today?', today':'')+'"><span class="n">'+n+'</span><span class="l">'+TYPE_LABEL[t]+'</span></button>';
+      var t = dayType(n), dn = !!st.done[n], open = isOpen(n);
+      if (dn) doneCount++;
+      html += '<button type="button" class="day t-'+t+(dn?' done':'')+(n===cur?' is-today':'')+(open?'':' locked')+'" data-go="'+n+'" aria-label="Day '+n+', '+TYPE_LABEL[t]+(dn?', done':'')+(n===cur?', next up':'')+(open?'':', locked')+'"><span class="n">'+n+'</span><span class="l">'+TYPE_LABEL[t]+'</span></button>';
     }
     html += '</div></div>';
   }
   return '<h1>30-day tracker</h1>'+
-    '<div class="legend"><span class="t-knee"><i></i>Knee</span><span class="t-post"><i></i>Posture</span><span class="t-rest"><i></i>Rest</span><span>✓ Done</span></div>'+
+    '<div class="legend"><span class="t-knee"><i></i>Knee</span><span class="t-post"><i></i>Posture</span><span class="t-rest"><i></i>Rest</span><span>✓ Done</span><span>🔒 Opens after the day before</span></div>'+
     html+
-    '<h2>Settings</h2><div class="card stack">'+
-      '<label class="field"><b>Start date (day 1)</b><input type="date" id="startDate" value="'+esc(st.start)+'"></label>'+
-      '<p class="muted" style="margin:0">Day 1 is '+fmt(dateOfDay(1))+'. Day 30 is '+fmt(dateOfDay(30))+'.</p>'+
+    '<h2>Start over</h2><div class="card stack">'+
+      '<p class="muted" style="margin:0">'+doneCount+' of 30 days done. Each day opens when you finish the day before.</p>'+
       '<button type="button" class="btn ghost" id="resetBtn">Reset progress</button>'+
-      '<p class="muted" id="resetMsg" style="margin:0">Clears the done days, ticked exercises and habits. The start date stays.</p>'+
+      '<p class="muted" id="resetMsg" style="margin:0">'+RESET_TXT+'</p>'+
     '</div>';
 }
+var RESET_TXT = 'Clears the done days, ticked exercises and habits, and takes you back to day 1.';
 
 function mediaHTML(m, name){
   if (m.type === 'priv') {
@@ -529,10 +533,21 @@ function cardHTML(it, idx, day, week){
 
 function viewDay(n){
   n = clampDay(n);
-  var st = load(), t = dayType(n), plan = planFor(t), week = weekOf(n), cls = 't-'+t;
-  var doneBtn = '<button type="button" class="btn '+(st.done[n]?'ghost':'primary')+' block" data-done="'+n+'">'+(st.done[n] ? '✓ Day '+n+' done · tap to undo' : 'Mark day '+n+' as done')+'</button>';
-  var nav = '<div class="daynav">'+(n>1?'<a class="btn ghost" href="#/day/'+(n-1)+'">← Day '+(n-1)+'</a>':'')+(n<30?'<a class="btn ghost" href="#/day/'+(n+1)+'">Day '+(n+1)+' →</a>':'')+'</div>';
-  var head = '<div class="shead"><div class="eyebrow">Day '+n+' · Week '+week+' · '+fmt(dateOfDay(n))+'</div><h1>'+(plan ? plan.title : 'Rest day')+'</h1><div class="muted">'+(plan ? plan.minutes : 'Rest, or an easy 20–30 minute walk')+'</div></div>';
+  var st = load(), t = dayType(n), plan = planFor(t), week = weekOf(n), cls = 't-'+t, dd = doneDate(n);
+  var doneBtn;
+  if (!st.done[n]) doneBtn = '<button type="button" class="btn primary block" data-done="'+n+'">Mark day '+n+' as done'+(n<30?' · opens day '+(n+1):'')+'</button>';
+  else if (st.done[n+1]) doneBtn = '<p class="donenote">✓ Day '+n+' done'+(dd?' · '+fmt(dd):'')+'</p>';
+  else doneBtn = '<button type="button" class="btn ghost block" data-done="'+n+'">✓ Day '+n+' done · tap to undo</button>'+
+    (n<30 ? '<a class="btn primary block" href="#/day/'+(n+1)+'">Day '+(n+1)+' is open · go →</a>' : '<a class="btn primary block" href="#/today">🎉 All 30 days done</a>');
+  var nav = '<div class="daynav">'+(n>1?'<a class="btn ghost" href="#/day/'+(n-1)+'">← Day '+(n-1)+'</a>':'')+(n<30?'<a class="btn ghost" href="#/day/'+(n+1)+'">'+(isOpen(n+1)?'':'🔒 ')+'Day '+(n+1)+' →</a>':'')+'</div>';
+  var head = '<div class="shead"><div class="eyebrow">Day '+n+' · Week '+week+(dd?' · done '+fmt(dd):'')+'</div><h1>'+(plan ? plan.title : 'Rest day')+'</h1><div class="muted">'+(plan ? plan.minutes : 'Rest, or an easy 20–30 minute walk')+'</div></div>';
+
+  if (!isOpen(n)) {
+    var cur = currentDay();
+    return '<div class="'+cls+' stack">'+head+
+      '<div class="card stack"><b>🔒 Day '+n+' is locked</b><p class="muted" style="margin:0">It opens when you finish day '+(n-1)+'. Your days open one at a time, in order.</p><a class="btn primary block" href="#/day/'+cur+'">Go to day '+cur+'</a></div>'+
+      nav+'</div>';
+  }
 
   if (!plan) {
     return '<div class="'+cls+' stack">'+head+
@@ -551,7 +566,7 @@ function viewDay(n){
     : '<div class="unlock"><b>🔒 Your private clips</b><p class="muted" style="margin:4px 0 10px">'+(privSupported()
         ? 'Enter your passcode once on this device to show your own stretch clips. Until then you see free clips.'
         : 'Open the site from its web link (not as a file) to unlock your clips.')+'</p>'+
-      (privSupported() ? '<form id="unlockForm" class="row"><input id="unlockPass" type="password" autocomplete="current-password" placeholder="Passcode" aria-label="Passcode"><button type="submit" class="btn primary">Unlock</button></form><p class="muted" id="unlockMsg" style="margin:8px 0 0"></p>' : '')+'</div>');
+      (privSupported() ? '<form id="unlockForm" class="row"><input id="unlockPass" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Passcode" aria-label="Passcode"><button type="submit" class="btn primary">Unlock</button></form><p class="muted" id="unlockMsg" style="margin:8px 0 0"></p>' : '')+'</div>');
   secs.forEach(function(s, si){
     body += '<h2>'+esc(s.title)+'</h2>'+(si === 0 ? unlock : '')+'<div class="exlist">';
     s.items.forEach(function(it){ idx++; total++; body += cardHTML(it, idx, n, week); });
@@ -598,7 +613,7 @@ function route(){
   else if (tab === 'habits') html = viewHabits();
   else if (tab === 'safety') html = viewSafety();
   else { tab = 'today'; html = viewToday(); }
-  if (parts[0] === 'day' && dayNumberToday() === clampDay(parseInt(parts[1],10)||1)) tab = 'today';
+  if (parts[0] === 'day' && currentDay() === clampDay(parseInt(parts[1],10)||1)) tab = 'today';
   app.innerHTML = html;
   document.querySelectorAll('.tabs a').forEach(function(a){ if (a.dataset.tab === tab) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
   window.scrollTo(0,0);
@@ -645,8 +660,9 @@ function unlockWith(pass, quiet){
   return deriveKey(pass).then(function(key){
     privKey = key; try { localStorage.setItem(PASS_KEY, pass); } catch(e) {}
     rerenderKeepScroll();
-  }).catch(function(){
-    if (quiet) return;
+  }).catch(function(err){
+    /* a saved passcode that no longer fits (the passcode was changed) is forgotten; network errors keep it */
+    if (quiet) { if (err && (err.name === 'OperationError' || err.message === 'wrong passcode')) { try { localStorage.removeItem(PASS_KEY); } catch(e) {} } return; }
     var m = document.getElementById('unlockMsg'); if (m) m.textContent = 'That passcode did not work. Check the passcode file on your computer and try again.';
   });
 }
@@ -734,7 +750,10 @@ document.addEventListener('click', function(e){
   var el;
   if ((el = e.target.closest('[data-go]'))) { location.hash = '#/day/'+el.dataset.go; return; }
   if ((el = e.target.closest('[data-done]'))) {
-    var n = el.dataset.done, st = load(); st.done[n] = !st.done[n]; if (!st.done[n]) delete st.done[n]; save();
+    var n = parseInt(el.dataset.done, 10), st = load();
+    if (st.done[n]) { if (!st.done[n+1]) delete st.done[n]; }   /* undo only the latest finished day */
+    else if (isOpen(n)) st.done[n] = isoDate(new Date());
+    save();
     var y = window.scrollY; route(); window.scrollTo(0, y); return;
   }
   if ((el = e.target.closest('.chip'))) {
@@ -758,11 +777,11 @@ document.addEventListener('click', function(e){
     var b = e.target, msg = document.getElementById('resetMsg');
     if (b.dataset.armed) {
       var s = load(); s.done = {}; s.ticks = {}; s.habits = {}; save();
-      route(); var m2 = document.getElementById('resetMsg'); if (m2) m2.textContent = 'Progress cleared.';
+      route(); var m2 = document.getElementById('resetMsg'); if (m2) m2.textContent = 'Progress cleared. You are back on day 1.';
     } else {
       b.dataset.armed = '1'; b.textContent = 'Tap again to confirm reset'; b.classList.add('primary'); b.classList.remove('ghost');
       msg.textContent = 'This cannot be undone.';
-      setTimeout(function(){ if (b.isConnected && b.dataset.armed) { delete b.dataset.armed; b.textContent = 'Reset progress'; b.classList.remove('primary'); b.classList.add('ghost'); msg.textContent = 'Clears the done days, ticked exercises and habits. The start date stays.'; } }, 5000);
+      setTimeout(function(){ if (b.isConnected && b.dataset.armed) { delete b.dataset.armed; b.textContent = 'Reset progress'; b.classList.remove('primary'); b.classList.add('ghost'); msg.textContent = RESET_TXT; } }, 5000);
     }
   }
 });
@@ -782,8 +801,6 @@ document.addEventListener('change', function(e){
     var key = isoDate(new Date()); st.habits[key] = st.habits[key] || {};
     if (t.checked) st.habits[key][t.dataset.habit] = true; else delete st.habits[key][t.dataset.habit];
     save(); t.closest('.tick').classList.toggle('on', t.checked);
-  } else if (t.id === 'startDate') {
-    if (parseISO(t.value)) { st.start = t.value; save(); route(); }
   }
 });
 
