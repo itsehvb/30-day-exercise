@@ -147,6 +147,14 @@ a{color:var(--accent-ink)}
 .fig .hd{fill:var(--fig)}
 .fig .hdf{fill:var(--fig-far)}
 .fig .halo{stroke:var(--media);fill:none;stroke-linecap:round;stroke-linejoin:round}
+.fig .lbl{fill:var(--muted);font:600 16px system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.extra{margin:0 0 10px;border-radius:12px;overflow:hidden}
+.extra svg{display:block;width:100%;height:auto}
+.media.yt{background:#000;overflow:hidden}
+.media.yt img{display:block;width:100%;height:100%;object-fit:cover}
+.media.yt iframe{display:block;width:100%;height:100%;border:0}
+.ytplay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:72px;height:72px;border-radius:50%;background:rgba(15,18,20,.78);color:#fff;display:grid;place-items:center;font-size:30px;padding-left:5px;pointer-events:none}
+.media.yt .msg{position:absolute;inset:0;display:grid;place-items:center;padding:16px;text-align:center;color:#fff;font-weight:600}
 .fig .pr{stroke:var(--prop);fill:none;stroke-linecap:round;stroke-linejoin:round}
 .fig .prf{fill:var(--prop)}
 .fig .ar{stroke:var(--accent);fill:none;stroke-width:5;stroke-linecap:round}
@@ -280,6 +288,22 @@ var SVG = {
       arrow(130,174,100,174),
       'Band knee straightening: band anchored in front and looped behind the knee; the knee straightens back against the band');
   },
+  star: function(){
+    /* top view: standing foot in the middle, 8 tap points around it */
+    var cx = 160, cy = 90, R = 56, out = '', labels = {0:'Front',2:'Side',4:'Back',6:'Side'};
+    for (var i = 0; i < 8; i++){
+      var a = -Math.PI/2 + i*Math.PI/4, x = cx + R*Math.cos(a), y = cy + R*Math.sin(a);
+      out += '<line x1="'+cx+'" y1="'+cy+'" x2="'+x.toFixed(1)+'" y2="'+y.toFixed(1)+'" class="dash"/>';
+      out += '<circle cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="9" class="arh"/>';
+      if (labels[i] !== undefined) {
+        var lx = cx + (R+26)*Math.cos(a), ly = cy + (R+22)*Math.sin(a) + 6;
+        out += '<text x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" text-anchor="middle" class="lbl">'+labels[i]+'</text>';
+      }
+    }
+    return '<svg class="fig" viewBox="0 0 320 206" role="img" aria-label="Top view of the star: stand on one foot in the middle and tap the floor at 8 points around you"><rect class="bg" width="320" height="206"/>'+out+
+      '<ellipse cx="'+cx+'" cy="'+cy+'" rx="11" ry="19" class="hd"/>'+
+      '<text x="160" y="198" text-anchor="middle" class="lbl">Top view · standing foot in the middle</text></svg>';
+  },
   chintuck: function(){
     function person(dx, tilt){
       return '<path class="hd" d="M100 240 L110 204 Q160 182 214 200 L226 240 Z"/>'+
@@ -301,6 +325,7 @@ var SVG = {
 function V(name, w, h, note){ return {type:'video', src:'images/'+name+'.mp4', poster:'images/'+name+'.jpg', w:w||640, h:h||480, note:note}; }
 function I(name, w, h, note){ return {type:'img', src:'images/'+name+'.jpg', w:w||640, h:h||480, note:note}; }
 function S(name){ return {type:'svg', svg:name}; }
+function Y(id, ratio, by, fallback){ return {type:'yt', id:id, ratio:ratio, by:by, fallback:fallback}; }
 
 /* ---------- program (exercise text exactly as written) ---------- */
 var KNEE = {
@@ -313,11 +338,12 @@ var KNEE = {
     'Week 4: add slow single-leg lowers to a chair (4 seconds down on one leg, stand up with both), 3 × 6 per leg.'
   ],
   sections:[
-    {title:'Warm-up and stretches (10 min)', items:[
-      {id:'k1', name:'Easy cycling or brisk walk', dose:'5 min', how:'Gentle pace, just enough to feel warm. The knee should stay pain-free.', media:V('bike'), timer:{opts:[300]}},
-      {id:'k2', name:'Side-lying quad stretch', dose:'2 × 30 s per side', how:'Lie on your side, bend the top knee and pull the heel toward your glute. Push the hips slightly forward and keep the back flat.', media:S('sidequad'), timer:{opts:[30], hint:'Repeat for each side and each set.'}},
-      {id:'k3', name:'Lying hamstring stretch', dose:'2 × 30 s per side', how:'On your back, loop a towel or band around one foot. Raise that leg with the knee nearly straight until you feel a gentle pull behind the thigh.', media:V('hamstring',640,480,'The video shows the leg held with the hands. A towel or band around the foot works the same way.'), timer:{opts:[30], hint:'Repeat for each side and each set.'}},
-      {id:'k4', name:'Wall calf stretch', dose:'2 × 30 s per side', how:'Hands on a wall, one leg back with the knee straight and the heel pressed down. Lean in until the calf stretches.', media:V('calfstretch'), timer:{opts:[30], hint:'Repeat for each side and each set.'}}
+    {title:'Stretches (10 min)', items:[
+      {id:'k2', name:'Side-lying quad stretch', dose:'2 × 30 s per side', how:'Lie on your side, bend the top knee and pull the heel toward your glute. Push the hips slightly forward and keep the back flat.', media:Y('nUoSkE8eJO8','4 / 3','Dynamic Cyclist', S('sidequad')), timer:{opts:[30], hint:'Repeat for each side and each set.'}},
+      {id:'k2b', onlyWeek:1, name:'Standing quad stretch', dose:'2 × 30 s per side', how:'Stand tall with one hand on a wall. Bend one knee and hold the ankle behind you, bringing the heel toward your glute. Keep the knees side by side and the hips pushed slightly forward.', media:V('standquad'), weeks:{1:'Week 1: second quad stretch.'}, timer:{opts:[30], hint:'Repeat for each side and each set.'}},
+      {id:'k3', name:'Lying hamstring stretch', dose:'2 × 30 s per side', how:'On your back, loop a towel or band around one foot. Raise that leg with the knee nearly straight until you feel a gentle pull behind the thigh.', media:Y('yrGLCjsPJ6E','3 / 4','SHRP Training', V('hamstring')), timer:{opts:[30], hint:'Repeat for each side and each set.'}},
+      {id:'k3b', onlyWeek:1, name:'Seated hamstring stretch', dose:'2 × 30 s per side', how:'Sit with one leg straight and the other knee bent out to the side. Keep the back long and lean forward from the hips toward the straight leg until you feel a gentle pull behind the thigh. Do not bounce.', media:V('seatedham',640,360), weeks:{1:'Week 1: second hamstring stretch.'}, timer:{opts:[30], hint:'Repeat for each side and each set.'}},
+      {id:'k4', name:'Wall calf stretch', dose:'2 × 30 s per side', how:'Hands on a wall, one leg back with the knee straight and the heel pressed down. Lean in until the calf stretches.', media:Y('f1HzSAuB-Vw','16 / 9','FitnessBlender', V('calfstretch')), timer:{opts:[30], hint:'Repeat for each side and each set.'}}
     ]},
     {title:'Strength', items:[
       {id:'k5', name:'Wall sit', dose:'4 × 30–45 s', how:'Back flat against the wall, slide down until the knees bend to about 60°, not a deep squat. Press the lower back into the wall and hold.', media:I('wallsit',640,480,'The photo shows the position. The ball is not needed.'), timer:{opts:[30,45], byWeek:[30,45,45,45], hint:'Repeat for each set.'}},
@@ -328,7 +354,8 @@ var KNEE = {
       {id:'k9', name:'Hamstring walkout', dose:'3 × 6–8', how:'From a glute bridge, walk the heels out in small steps and back in. Keep the hips lifted and level, and go only as far as you can control.', media:S('walkout')},
       {id:'k10', name:'Reverse lunge holding a chair', dose:'3 × 8 per leg', how:'Hold a chair for balance. Take a short step back, lower slowly to a pain-free depth, then push through the front heel to stand.', media:V('lunge',640,480,'The video shows the step back and stand up. Hold a chair for balance as described.'), weeks:{3:'Week 3: hold dumbbells for the reverse lunges.',4:'Keep the dumbbells from week 3.'}},
       {id:'k11', name:'Band knee straightening', dose:'2 × 15 per leg', how:'Anchor a band in front of you and loop it behind the knee. Start slightly bent, then straighten the knee fully against the band and squeeze the thigh. Left leg especially.', media:S('tke')},
-      {id:'k12', name:'Calf raises', dose:'3 × 15', how:'Rise onto your toes, pause, and lower slowly. Hold a wall for balance.', media:V('calfraise',640,480,'Shown on a step. On the floor, rise and lower the same way.')}
+      {id:'k12', name:'Calf raises', dose:'3 × 15', how:'Rise onto your toes, pause, and lower slowly. Hold a wall for balance.', media:V('calfraise',640,480,'Shown on a step. On the floor, rise and lower the same way.')},
+      {id:'k13', name:'Star excursion balance (star taps)', dose:'2 rounds per leg', how:'Stand on one leg with a soft knee, holding a chair if you need it. With the other foot, reach out and lightly tap the floor in front, to the side and behind, like the points of a star, coming back to the middle after each tap. Keep the standing knee in line with the toes and reach only as far as you can control.', media:V('startaps',640,480,'The video shows the forward reaches. Tap all the points on the star below, and keep the standing knee only slightly bent. Do not squat deep.'), extra:'star'}
     ]}
   ]
 };
@@ -371,10 +398,17 @@ var SAFETY = [
   ['What to expect','Thirty days is enough to reduce tightness, build the habit and get stronger. Fully correcting posture and finishing tendon rehab usually takes 8–12 weeks, so repeat the program with heavier loads afterwards.']
 ];
 
+var YT_CREDITS = [
+  ['Side-lying quad stretch','Dynamic Cyclist','https://www.youtube.com/shorts/nUoSkE8eJO8'],
+  ['Lying hamstring stretch','SHRP Training','https://www.youtube.com/shorts/yrGLCjsPJ6E'],
+  ['Wall calf stretch','FitnessBlender','https://www.youtube.com/watch?v=f1HzSAuB-Vw']
+];
 var CREDITS = [
-  ['Easy cycling','Zeal Creative Studios','https://www.pexels.com/video/35870171/'],
-  ['Lying hamstring stretch','Kampus Production','https://www.pexels.com/video/6023250/'],
-  ['Wall calf stretch','Ketut Subiyanto','https://www.pexels.com/video/4858889/'],
+  ['Standing quad stretch','Ketut Subiyanto','https://www.pexels.com/video/4858890/'],
+  ['Seated hamstring stretch','Kampus Production','https://www.pexels.com/video/6891862/'],
+  ['Star taps','MART PRODUCTION','https://www.pexels.com/video/8435275/'],
+  ['Lying hamstring stretch (offline clip)','Kampus Production','https://www.pexels.com/video/6023250/'],
+  ['Wall calf stretch (offline clip)','Ketut Subiyanto','https://www.pexels.com/video/4858889/'],
   ['Wall sit (photo)','Mikhail Nilov','https://www.pexels.com/photo/6740055/'],
   ['Squat','MART PRODUCTION','https://www.pexels.com/video/8837118/'],
   ['Glute bridge','Polina Tankilevitch','https://www.pexels.com/video/6525487/'],
@@ -454,7 +488,12 @@ function viewCalendar(){
     '</div>';
 }
 
+function ytSrc(id){ return 'https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&mute=1&loop=1&playlist='+id+'&playsinline=1&rel=0&modestbranding=1'; }
 function mediaHTML(m, name){
+  if (m.type === 'yt') {
+    if (navigator.onLine === false && m.fallback) return mediaHTML(m.fallback, name) + '<p class="vnote" style="margin:10px 16px 0">You are offline, so this is the saved clip. Connect to the internet to see the YouTube video.</p>';
+    return '<div class="media yt" style="aspect-ratio:'+m.ratio+'" data-yt="'+m.id+'" data-title="'+esc(name)+'"><img src="https://i.ytimg.com/vi/'+m.id+'/hqdefault.jpg" alt="" loading="lazy" onerror="this.remove()"><span class="ytplay" aria-hidden="true">▶</span><span class="pill">Tap to play · YouTube</span></div>';
+  }
   if (m.type === 'svg') return '<div class="media">'+SVG[m.svg]()+'</div>';
   if (m.type === 'img') return '<div class="media"><img src="'+m.src+'" width="'+m.w+'" height="'+m.h+'" alt="'+esc(name)+' — photo" loading="lazy"><span class="pill still">Photo</span></div>';
   return '<div class="media" data-video><video src="'+m.src+'" poster="'+m.poster+'" width="'+m.w+'" height="'+m.h+'" muted loop playsinline preload="none" aria-label="'+esc(name)+' — looping video"></video><span class="pill">▶ Tap to play</span></div>';
@@ -476,6 +515,8 @@ function cardHTML(it, idx, day, week){
     '<span class="dose">'+esc(it.dose)+'</span>'+wk+
     '<p class="how">'+esc(it.how)+'</p>'+
     (it.media.note ? '<p class="vnote">'+esc(it.media.note)+'</p>' : '')+
+    (it.media.type === 'yt' ? '<p class="vnote">Video by '+esc(it.media.by)+' on YouTube. Needs internet; offline you see a saved version instead.</p>' : '')+
+    (it.extra ? '<div class="extra">'+SVG[it.extra]()+'</div>' : '')+
     (it.timer ? timerHTML(it, week) : '')+
     '<label class="tick'+(ticked?' on':'')+'"><input type="checkbox" data-tick="'+it.id+'"'+(ticked?' checked':'')+'> <span>Done</span></label>'+
     '</div></article>';
@@ -528,9 +569,11 @@ function viewHabits(){
 function viewSafety(){
   return '<div class="safety t-knee"><h1>Safety</h1>'+
     SAFETY.map(function(s){ return '<section><h2>'+esc(s[0])+'</h2><p style="margin:0">'+esc(s[1])+'</p></section>'; }).join('')+
-    '<h2>Photo and video credits</h2><p class="muted">Videos and photos are from Pexels and free to use. Thank you to:</p><ul class="plain credits">'+
+    '<h2>Photo and video credits</h2><p class="muted">These YouTube videos are shown with YouTube’s own player and need internet:</p><ul class="plain credits">'+
+    YT_CREDITS.map(function(c){ return '<li>'+esc(c[0])+': <a href="'+c[2]+'" target="_blank" rel="noopener">'+esc(c[1])+'</a></li>'; }).join('')+
+    '</ul><p class="muted" style="margin-top:12px">The other videos and photos are from Pexels and free to use. Thank you to:</p><ul class="plain credits">'+
     CREDITS.map(function(c){ return '<li>'+esc(c[0])+': <a href="'+c[2]+'" target="_blank" rel="noopener">'+esc(c[1])+'</a></li>'; }).join('')+
-    '</ul><p class="muted" style="margin-top:12px">The side-lying quad stretch, hamstring walkout, band knee straightening and chin tuck are drawn illustrations, because no free photo of those moves was available.</p></div>';
+    '</ul><p class="muted" style="margin-top:12px">The hamstring walkout, band knee straightening and chin tuck are drawn illustrations, because no free photo of those moves was available. The star diagram is drawn too.</p></div>';
 }
 
 /* ---------- router ---------- */
@@ -641,6 +684,12 @@ document.addEventListener('click', function(e){
     var box = el.closest('[data-timer]');
     if (el.dataset.act === 'start') { if (T.el === box && T.running) pauseTimer(); else startTimer(box); }
     else { if (T.el === box) stopTimer(true); else box.querySelector('.clock').textContent = fmtSecs(parseInt(box.dataset.secs,10)); }
+    return;
+  }
+  if ((el = e.target.closest('[data-yt]'))) {
+    if (el.querySelector('iframe')) return;
+    if (navigator.onLine === false) { el.insertAdjacentHTML('beforeend', '<div class="msg">You are offline. Connect to the internet to play this video.</div>'); return; }
+    el.innerHTML = '<iframe src="'+ytSrc(el.dataset.yt)+'" title="'+esc(el.dataset.title)+' (YouTube video)" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>';
     return;
   }
   if ((el = e.target.closest('[data-video]'))) {
