@@ -79,10 +79,10 @@ a{color:var(--accent-ink)}
 .day{position:relative;min-height:78px;border-radius:12px;border:1px solid var(--line);border-top:6px solid var(--accent);background:var(--card);display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;padding:6px 10px 8px;font:inherit;color:inherit;cursor:pointer;text-align:left;width:100%}
 .day .n{font-size:21px;font-weight:750;line-height:1.2}
 .day .l{font-size:16px;color:var(--accent-ink);font-weight:600}
-.day.done{background:var(--accent-soft)}
+.day.done{background-color:var(--accent-soft)}
 .day.done::after{content:"✓";position:absolute;top:4px;right:8px;font-weight:800;font-size:20px;color:var(--accent-ink)}
 .day.is-today{box-shadow:0 0 0 3px var(--ink)}
-.day.locked{background:transparent;border-style:dashed;border-top-style:solid}
+.day.locked{background-color:transparent;border-style:dashed;border-top-style:solid}
 .day.locked .n,.day.locked .l{color:var(--muted)}
 .day.locked::after{content:"🔒";position:absolute;top:6px;right:8px;font-size:15px}
 .donenote{margin:0;padding:12px 14px;border-radius:12px;background:var(--accent-soft);color:var(--accent-ink);font-weight:700;text-align:center}
@@ -98,6 +98,16 @@ a{color:var(--accent-ink)}
 .prog li{padding:4px 6px;border-radius:8px}
 .prog li.now{background:var(--accent-soft);font-weight:650}
 .prog li.now::after{content:"  ← this week";color:var(--accent-ink);font-weight:750}
+/* a day with two workouts: two-colour top edge */
+.combo{border-top-color:transparent!important;background-image:linear-gradient(90deg,var(--c1) 50%,var(--c2) 50%);background-origin:border-box;background-size:100% var(--bt,6px);background-repeat:no-repeat}
+.c-knee-post{--c1:var(--knee);--c2:var(--post)}
+.c-post-knee{--c1:var(--post);--c2:var(--knee)}
+.shead.combo{--bt:8px}
+.legend i.two{background:linear-gradient(90deg,var(--knee) 50%,var(--post) 50%)}
+.addwo .btn{flex:1 1 220px}
+.workout{padding-top:10px}
+.wohead{border-radius:14px;padding:12px 16px;background:var(--accent-soft);border-left:8px solid var(--accent)}
+.wohead h2{margin:2px 0}
 .daynav{display:flex;gap:10px}
 .daynav .btn{flex:1}
 .counter{font-weight:650;color:var(--muted)}
@@ -197,7 +207,7 @@ function load(){
   var s = null;
   try { s = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e) {}
   mem = s && typeof s === 'object' ? s : {};
-  mem.done = mem.done || {}; mem.ticks = mem.ticks || {}; mem.habits = mem.habits || {};
+  mem.done = mem.done || {}; mem.ticks = mem.ticks || {}; mem.habits = mem.habits || {}; mem.extra = mem.extra || {};
   /* days now open one after another from day 1; older date-based progress starts over once */
   if (mem.seq !== 1) { mem.done = {}; mem.ticks = {}; delete mem.start; mem.seq = 1; save(); }
   return mem;
@@ -215,6 +225,20 @@ function fmt(d){ return WD[d.getDay()]+' '+d.getDate()+' '+MON[d.getMonth()]; }
 function currentDay(){ var d = load().done; for (var n=1; n<=30; n++) if (!d[n]) return n; return 31; }
 function isOpen(n){ return n <= 1 || !!load().done[n-1]; }
 function doneDate(n){ var v = load().done[n]; return typeof v === 'string' ? parseISO(v) : null; }
+
+/* ---------- workouts per day: the planned one, plus a second one you add (legs + back on the same day) ---------- */
+function workoutsFor(n){
+  var base = dayType(n), add = load().extra[n] || [], list = base === 'rest' ? [] : [base];
+  ['knee','post'].forEach(function(t){ if (add.indexOf(t) >= 0 && list.indexOf(t) < 0) list.push(t); });
+  return list;
+}
+function dayLabel(n){ var w = workoutsFor(n); return w.length ? w.map(function(t){ return TYPE_LABEL[t]; }).join(' + ') : 'Rest'; }
+function dayTitle(n){ var w = workoutsFor(n); return !w.length ? 'Rest day' : (w.length === 1 ? planFor(w[0]).title : dayLabel(n)+' day'); }
+function minutesFor(list){
+  if (list.length === 1) return planFor(list[0]).minutes;
+  return 'about '+list.reduce(function(sum, t){ return sum + parseInt(planFor(t).minutes.replace(/\D+/g, ''), 10); }, 0)+' minutes in total';
+}
+function comboCls(list){ return list.length > 1 ? ' combo c-'+list[0]+'-'+list[1] : ''; }
 
 /* ---------- schedule ---------- */
 function dayType(n){
@@ -438,8 +462,8 @@ function viewToday(){
   if (n > 30) {
     todayBlock = '<div class="card today t-knee"><div class="eyebrow">Program complete</div><div class="big">You finished all 30 days</div><p class="muted">Repeat the program with heavier loads, or open any day from the calendar.</p><a class="btn primary block" href="#/calendar">Open calendar</a></div>';
   } else {
-    var t = dayType(n), cls = 't-'+t, plan = planFor(t);
-    var sub = plan ? plan.title+' · '+plan.minutes : 'Rest, or an easy 20–30 minute walk';
+    var wl = workoutsFor(n), cls = 't-'+(wl[0] || 'rest');
+    var sub = wl.length ? dayTitle(n)+' · '+minutesFor(wl) : 'Rest, or an easy 20–30 minute walk';
     var prev = n > 1 ? doneDate(n-1) : null;
     var note = n === 1 ? 'Start here. Each day opens when you finish the day before.'
       : (prev && isoDate(prev) === isoDate(new Date()) ? 'You finished day '+(n-1)+' today, so day '+n+' is open.' : 'Day '+(n-1)+' is done, so day '+n+' is open.');
@@ -463,14 +487,15 @@ function viewCalendar(){
     var from = w*7+1, to = Math.min(30, w*7+7);
     html += '<div class="week"><h3>'+(w<4 ? 'Week '+(w+1) : 'Days 29–30 (week 4 progression)')+'</h3><div class="cal">';
     for (var n=from; n<=to; n++){
-      var t = dayType(n), dn = !!st.done[n], open = isOpen(n);
+      var wl = workoutsFor(n), lbl = dayLabel(n), dn = !!st.done[n], open = isOpen(n);
       if (dn) doneCount++;
-      html += '<button type="button" class="day t-'+t+(dn?' done':'')+(n===cur?' is-today':'')+(open?'':' locked')+'" data-go="'+n+'" aria-label="Day '+n+', '+TYPE_LABEL[t]+(dn?', done':'')+(n===cur?', next up':'')+(open?'':', locked')+'"><span class="n">'+n+'</span><span class="l">'+TYPE_LABEL[t]+'</span></button>';
+      html += '<button type="button" class="day t-'+(wl[0] || 'rest')+comboCls(wl)+(dn?' done':'')+(n===cur?' is-today':'')+(open?'':' locked')+'" data-go="'+n+'" aria-label="Day '+n+', '+lbl+(dn?', done':'')+(n===cur?', next up':'')+(open?'':', locked')+'"><span class="n">'+n+'</span><span class="l">'+lbl+'</span></button>';
     }
     html += '</div></div>';
   }
   return '<h1>30-day tracker</h1>'+
-    '<div class="legend"><span class="t-knee"><i></i>Knee</span><span class="t-post"><i></i>Posture</span><span class="t-rest"><i></i>Rest</span><span>✓ Done</span><span>🔒 Opens after the day before</span></div>'+
+    '<div class="legend"><span class="t-knee"><i></i>Knee</span><span class="t-post"><i></i>Posture</span><span><i class="two"></i>Knee + Posture</span><span class="t-rest"><i></i>Rest</span><span>✓ Done</span><span>🔒 Opens after the day before</span></div>'+
+    '<p class="muted" style="margin:10px 0 0">Want legs and back on the same day? Open the day and add the second workout.</p>'+
     html+
     '<h2>Start over</h2><div class="card stack">'+
       '<p class="muted" style="margin:0">'+doneCount+' of 30 days done. Each day opens when you finish the day before.</p>'+
@@ -478,7 +503,7 @@ function viewCalendar(){
       '<p class="muted" id="resetMsg" style="margin:0">'+RESET_TXT+'</p>'+
     '</div>';
 }
-var RESET_TXT = 'Clears the done days, ticked exercises and habits, and takes you back to day 1.';
+var RESET_TXT = 'Clears the done days, ticked exercises, added workouts and habits, and takes you back to day 1.';
 
 function mediaHTML(m, name){
   if (m.type === 'priv') {
@@ -517,50 +542,76 @@ function cardHTML(it, idx, day, week){
     '</div></article>';
 }
 
+function progHTML(plan, week){
+  return plan.progression
+    ? '<div class="prog"><h2>Progression · week '+week+'</h2><ol>'+plan.progression.map(function(p,i){ return '<li'+(i+1===week?' class="now"':'')+'>'+esc(p)+'</li>'; }).join('')+'</ol></div>'
+    : '<div class="prog"><h2>Progression · week '+week+'</h2><p style="margin:0">'+esc(plan.progressionText)+'</p></div>';
+}
+function unlockHTML(){
+  return privKey
+    ? '<div class="unlock on"><span>🔓 Your private clips are unlocked on this device.</span><button type="button" class="btn ghost" id="lockBtn">Lock</button></div>'
+    : '<div class="unlock"><b>🔒 Your private clips</b><p class="muted" style="margin:4px 0 10px">'+(privSupported()
+        ? 'Enter your passcode once on this device to show your own stretch clips. Until then you see free clips.'
+        : 'Open the site from its web link (not as a file) to unlock your clips.')+'</p>'+
+      (privSupported() ? '<form id="unlockForm" class="row"><input id="unlockPass" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Passcode" aria-label="Passcode"><button type="submit" class="btn primary">Unlock</button></form><p class="muted" id="unlockMsg" style="margin:8px 0 0"></p>' : '')+'</div>';
+}
+/* add or remove a second workout on a day that is not done yet */
+var WO_NAME = {knee:'knee (legs)', post:'posture (back)'};
+function extraHTML(n){
+  if (load().done[n]) return '';
+  var base = dayType(n), wl = workoutsFor(n);
+  var opts = base === 'rest' ? ['knee','post'] : [base === 'knee' ? 'post' : 'knee'];
+  return '<div class="card addwo stack"><b>'+(base === 'rest' ? 'Train on this rest day?' : 'Two workouts on this day?')+'</b><div class="row">'+
+    opts.map(function(t){
+      var on = wl.indexOf(t) >= 0;
+      return '<button type="button" class="btn '+(on ? 'ghost' : 'primary')+' t-'+t+'" data-extra="'+t+'">'+(on ? '✕ Remove the '+WO_NAME[t]+' workout' : '+ Add the '+WO_NAME[t]+' workout')+'</button>';
+    }).join('')+'</div></div>';
+}
+
 function viewDay(n){
   n = clampDay(n);
-  var st = load(), t = dayType(n), plan = planFor(t), week = weekOf(n), cls = 't-'+t, dd = doneDate(n);
+  var st = load(), list = workoutsFor(n), many = list.length > 1, week = weekOf(n), cls = 't-'+(list[0] || 'rest'), dd = doneDate(n);
   var doneBtn;
   if (!st.done[n]) doneBtn = '<button type="button" class="btn primary block" data-done="'+n+'">Mark day '+n+' as done'+(n<30?' · opens day '+(n+1):'')+'</button>';
   else if (st.done[n+1]) doneBtn = '<p class="donenote">✓ Day '+n+' done'+(dd?' · '+fmt(dd):'')+'</p>';
   else doneBtn = '<button type="button" class="btn ghost block" data-done="'+n+'">✓ Day '+n+' done · tap to undo</button>'+
     (n<30 ? '<a class="btn primary block" href="#/day/'+(n+1)+'">Day '+(n+1)+' is open · go →</a>' : '<a class="btn primary block" href="#/today">🎉 All 30 days done</a>');
   var nav = '<div class="daynav">'+(n>1?'<a class="btn ghost" href="#/day/'+(n-1)+'">← Day '+(n-1)+'</a>':'')+(n<30?'<a class="btn ghost" href="#/day/'+(n+1)+'">'+(isOpen(n+1)?'':'🔒 ')+'Day '+(n+1)+' →</a>':'')+'</div>';
-  var head = '<div class="shead"><div class="eyebrow">Day '+n+' · Week '+week+(dd?' · done '+fmt(dd):'')+'</div><h1>'+(plan ? plan.title : 'Rest day')+'</h1><div class="muted">'+(plan ? plan.minutes : 'Rest, or an easy 20–30 minute walk')+'</div></div>';
+  var head = '<div class="shead'+comboCls(list)+'"><div class="eyebrow">Day '+n+' · Week '+week+(dd?' · done '+fmt(dd):'')+'</div><h1>'+esc(dayTitle(n))+'</h1><div class="muted">'+(list.length ? minutesFor(list) : 'Rest, or an easy 20–30 minute walk')+'</div></div>';
+  var extra = extraHTML(n);
 
   if (!isOpen(n)) {
     var cur = currentDay();
     return '<div class="'+cls+' stack">'+head+
       '<div class="card stack"><b>🔒 Day '+n+' is locked</b><p class="muted" style="margin:0">It opens when you finish day '+(n-1)+'. Your days open one at a time, in order.</p><a class="btn primary block" href="#/day/'+cur+'">Go to day '+cur+'</a></div>'+
-      nav+'</div>';
+      extra+nav+'</div>';
   }
 
-  if (!plan) {
+  if (!list.length) {
     return '<div class="'+cls+' stack">'+head+
       '<div class="card stack"><p style="margin:0">Rest, or an easy 20–30 minute walk.</p><p class="muted" style="margin:0">Still do your 2-minute daily habits today.</p><a class="btn ghost" href="#/habits">Open daily habits</a></div>'+
-      doneBtn+nav+'</div>';
+      extra+doneBtn+nav+'</div>';
   }
 
-  var prog = plan.progression
-    ? '<div class="prog"><h2>Progression · week '+week+'</h2><ol>'+plan.progression.map(function(p,i){ return '<li'+(i+1===week?' class="now"':'')+'>'+esc(p)+'</li>'; }).join('')+'</ol></div>'
-    : '<div class="prog"><h2>Progression · week '+week+'</h2><p style="margin:0">'+esc(plan.progressionText)+'</p></div>';
-
-  var secs = itemsFor(plan, week), idx = 0, total = 0, body = '';
-  var hasPriv = secs.some(function(s){ return s.items.some(function(it){ return it.media.type === 'priv'; }); });
-  var unlock = !hasPriv ? '' : (privKey
-    ? '<div class="unlock on"><span>🔓 Your private clips are unlocked on this device.</span><button type="button" class="btn ghost" id="lockBtn">Lock</button></div>'
-    : '<div class="unlock"><b>🔒 Your private clips</b><p class="muted" style="margin:4px 0 10px">'+(privSupported()
-        ? 'Enter your passcode once on this device to show your own stretch clips. Until then you see free clips.'
-        : 'Open the site from its web link (not as a file) to unlock your clips.')+'</p>'+
-      (privSupported() ? '<form id="unlockForm" class="row"><input id="unlockPass" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Passcode" aria-label="Passcode"><button type="submit" class="btn primary">Unlock</button></form><p class="muted" id="unlockMsg" style="margin:8px 0 0"></p>' : '')+'</div>');
-  secs.forEach(function(s, si){
-    body += '<h2>'+esc(s.title)+'</h2>'+(si === 0 ? unlock : '')+'<div class="exlist">';
-    s.items.forEach(function(it){ idx++; total++; body += cardHTML(it, idx, n, week); });
-    body += '</div>';
+  /* one workout: progression and purpose sit at the top as before; two workouts: each gets its own block */
+  var top = '', body = '', total = 0, unlockShown = false, shownIds = {};
+  list.forEach(function(t, wi){
+    var plan = planFor(t), secs = itemsFor(plan, week), idx = 0, part = '';
+    var intro = progHTML(plan, week)+'<p class="muted" style="margin:0">'+esc(plan.purpose)+'</p>';
+    var hasPriv = secs.some(function(s){ return s.items.some(function(it){ return it.media.type === 'priv'; }); });
+    if (many) part += '<div class="wohead"><div class="eyebrow">Workout '+(wi+1)+' of '+list.length+'</div><h2>'+esc(plan.title)+'</h2><div class="muted">'+esc(plan.minutes)+'</div></div>'+intro;
+    else top = intro;
+    secs.forEach(function(s, si){
+      var u = '';
+      if (si === 0 && hasPriv && !unlockShown) { u = unlockHTML(); unlockShown = true; }
+      part += '<h2>'+esc(s.title)+'</h2>'+u+'<div class="exlist">';
+      s.items.forEach(function(it){ idx++; total++; shownIds[it.id] = 1; part += cardHTML(it, idx, n, week); });
+      part += '</div>';
+    });
+    body += many ? '<section class="workout stack t-'+t+'">'+part+'</section>' : part;
   });
-  var tickedCount = Object.keys(st.ticks[n]||{}).filter(function(k){ return st.ticks[n][k]; }).length;
-  return '<div class="'+cls+' stack">'+head+prog+
-    '<p class="muted" style="margin:0">'+esc(plan.purpose)+'</p>'+
+  var tickedCount = Object.keys(st.ticks[n]||{}).filter(function(k){ return st.ticks[n][k] && shownIds[k]; }).length;
+  return '<div class="'+cls+' stack">'+head+extra+top+
     doneBtn+'<p class="counter" id="counter" data-total="'+total+'">'+tickedCount+' of '+total+' exercises ticked</p>'+
     body+'<div style="margin-top:20px" class="stack">'+doneBtn+nav+'</div></div>';
 }
@@ -742,6 +793,17 @@ document.addEventListener('click', function(e){
     save();
     var y = window.scrollY; route(); window.scrollTo(0, y); return;
   }
+  if ((el = e.target.closest('[data-extra]'))) {
+    var dn = parseInt((location.hash.match(/day\/(\d+)/)||[])[1], 10), s2 = load(), wt = el.dataset.extra;
+    if (dn && !s2.done[dn]) {
+      var had = s2.extra[dn] || [], a = had.filter(function(x){ return x !== wt; });
+      if (a.length === had.length) a.push(wt);   /* not there yet: add it */
+      else if (s2.ticks[dn]) Object.keys(s2.ticks[dn]).forEach(function(k){ if (k.charAt(0) === wt.charAt(0)) delete s2.ticks[dn][k]; });   /* removed: forget its ticks (k… knee, p… posture) */
+      if (a.length) s2.extra[dn] = a; else delete s2.extra[dn];
+      save(); var y2 = window.scrollY; route(); window.scrollTo(0, y2);
+    }
+    return;
+  }
   if ((el = e.target.closest('.chip'))) {
     var tm = el.closest('[data-timer]'); if (T.el === tm) stopTimer(true);
     tm.querySelectorAll('.chip').forEach(function(c){ c.setAttribute('aria-pressed', String(c === el)); });
@@ -762,7 +824,7 @@ document.addEventListener('click', function(e){
   if (e.target.id === 'resetBtn') {
     var b = e.target, msg = document.getElementById('resetMsg');
     if (b.dataset.armed) {
-      var s = load(); s.done = {}; s.ticks = {}; s.habits = {}; save();
+      var s = load(); s.done = {}; s.ticks = {}; s.habits = {}; s.extra = {}; save();
       route(); var m2 = document.getElementById('resetMsg'); if (m2) m2.textContent = 'Progress cleared. You are back on day 1.';
     } else {
       b.dataset.armed = '1'; b.textContent = 'Tap again to confirm reset'; b.classList.add('primary'); b.classList.remove('ghost');
@@ -782,7 +844,7 @@ document.addEventListener('change', function(e){
     t.closest('.tick').classList.toggle('on', t.checked);
     t.closest('.ex').classList.toggle('ticked', t.checked);
     var c = document.getElementById('counter');
-    if (c) c.textContent = Object.keys(st.ticks[day]).length+' of '+c.dataset.total+' exercises ticked';
+    if (c) c.textContent = app.querySelectorAll('[data-tick]:checked').length+' of '+c.dataset.total+' exercises ticked';
   } else if (t.dataset.habit) {
     var key = isoDate(new Date()); st.habits[key] = st.habits[key] || {};
     if (t.checked) st.habits[key][t.dataset.habit] = true; else delete st.habits[key][t.dataset.habit];
