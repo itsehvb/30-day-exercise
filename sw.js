@@ -1,5 +1,5 @@
 /* Offline support: caches the page, icons, photos and videos. */
-const CACHE = 'ex30-v10';
+const CACHE = 'ex30-v11';
 const ASSETS = [
   "./", "index.html", "manifest.webmanifest", "icon.svg", "icon-180.png", "icon-192.png", "icon-512.png",
   "images/birddog.jpg",
@@ -32,6 +32,8 @@ const ASSETS = [
   "images/lunge.mp4",
   "images/plank.jpg",
   "images/private2/meta.json",
+  "images/private2/p_chairext.bin",
+  "images/private2/p_dbrow.bin",
   "images/private2/p_chintuck.bin",
   "images/private2/p_pullapart.bin",
   "images/private2/p_wallangel.bin",
