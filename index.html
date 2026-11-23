@@ -384,10 +384,10 @@ var POST = {
       {id:'p7', name:'Plank with tailbone tucked', dose:'3 × 20–40 s', how:'Elbows under the shoulders, body in one straight line. Tuck the tailbone and squeeze the glutes so the lower back does not sag.', media:I('plank'), timer:{opts:[20,25,30,35,40], byWeek:[20,30,35,40], hint:'Repeat for each set. Add 5–10 s each week.'}},
       {id:'p8', name:'Bird dog', dose:'3 × 8 per side', how:'On all fours, reach one arm forward and the opposite leg back. Keep the hips level and the back flat, pause, then switch.', media:Pv('p_birddog',640,360,'Hinge Health', I('birddog',640,426))},
       {id:'p9', name:'Band rows', dose:'3 × 12–15', how:'Anchor a band at chest height. Pull the elbows back, squeeze the shoulder blades together, and release slowly.', media:V('bandrow',640,480,'Shown seated with the band around the feet. The pull is the same with the band anchored at chest height.'), weeks:{3:'Week 3: move to a stronger band.',4:'Keep the stronger band from week 3.'}},
-      {id:'p10', name:'Band pull-aparts', dose:'3 × 15', how:'Hold a band at chest height with straight arms. Pull it apart until it touches your chest, squeezing the shoulder blades, then return slowly.', media:V('pullapart'), weeks:{3:'Week 3: move to a stronger band.',4:'Keep the stronger band from week 3.'}},
-      {id:'p11', name:'Wall angels', dose:'3 × 10', how:'Stand with your back, head and arms against a wall. Slide the arms up and down like a goalpost, keeping the lower back close to the wall.', media:V('wallangels',640,480,'Shown a step away from the wall. Do it with your back, head and arms against the wall.')},
-      {id:'p12', name:'Prone Y-T-W raises', dose:'2 × 8 each', how:'Lie face down. Lift the arms in a Y shape, then a T, then a W, thumbs up and shoulder blades squeezed. Keep the neck long.', media:V('ytw',640,360,'The video shows the Y position.')},
-      {id:'p13', name:'Chin tucks', dose:'2 × 10, hold 5 s', how:'Pull the chin straight back, as if making a double chin, without tilting the head down. Hold, then relax.', media:S('chintuck'), timer:{opts:[5], hint:'Tap for each 5-second hold.'}}
+      {id:'p10', name:'Band pull-aparts', dose:'3 × 15', how:'Hold a band at chest height with straight arms. Pull it apart until it touches your chest, squeezing the shoulder blades, then return slowly.', media:Pv('p_pullapart',480,600,'Movement Physio', V('pullapart')), weeks:{3:'Week 3: move to a stronger band.',4:'Keep the stronger band from week 3.'}},
+      {id:'p11', name:'Wall angels', dose:'3 × 10', how:'Stand with your back, head and arms against a wall. Slide the arms up and down like a goalpost, keeping the lower back close to the wall.', media:Pv('p_wallangel',490,600,'Rehab My Patient', V('wallangels',640,480,'Shown a step away from the wall. Do it with your back, head and arms against the wall.'))},
+      {id:'p12', name:'Prone Y-T-W raises', dose:'2 × 8 each', how:'Lie face down. Lift the arms in a Y shape, then a T, then a W, thumbs up and shoulder blades squeezed. Keep the neck long.', media:Pv('p_ytw',480,270,'WAC Sports Performance', V('ytw',640,360,'The video shows the Y position.'))},
+      {id:'p13', name:'Chin tucks', dose:'2 × 10, hold 5 s', how:'Pull the chin straight back, as if making a double chin, without tilting the head down. Hold, then relax.', media:Pv('p_chintuck',480,480,'Northallerton Osteopaths', S('chintuck')), timer:{opts:[5], hint:'Tap for each 5-second hold.'}}
     ]}
   ]
 };
@@ -421,7 +421,11 @@ var YT_CREDITS = [
   ['Cat-cow','Hinge Health','https://www.youtube.com/watch?v=1Y0YjXS9sKI'],
   ['Doorway chest stretch','Proformance Sports Rehab & Nutrition','https://www.youtube.com/shorts/W1WcacpQ_RM'],
   ['Dead bug','Pursuit Physical Therapy','https://www.youtube.com/watch?v=o4GKiEoYClI'],
-  ['Bird dog','Hinge Health','https://www.youtube.com/watch?v=xEDnlOxeJH4']
+  ['Bird dog','Hinge Health','https://www.youtube.com/watch?v=xEDnlOxeJH4'],
+  ['Band pull-aparts','Movement Physio','https://www.youtube.com/shorts/SuvO4TBwSu4'],
+  ['Wall angels','Rehab My Patient','https://www.youtube.com/watch?v=cvx06snMQ3A'],
+  ['Prone Y-T-W raises','WAC Sports Performance','https://www.youtube.com/shorts/SEyWJPaWr18'],
+  ['Chin tucks','Northallerton Osteopaths','https://www.youtube.com/watch?v=H0TWk06p5s4']
 ];
 var CREDITS = [
   ['Butterfly stretch (offline clip)','Mikhail Nilov','https://www.pexels.com/video/7500537/'],
@@ -625,13 +629,14 @@ function viewHabits(){
   var st = load(), key = isoDate(new Date()), h = st.habits[key] || {};
   var all = POST.sections[1].items;
   var chin = all.filter(function(x){ return x.id === 'p13'; })[0], ang = all.filter(function(x){ return x.id === 'p11'; })[0];
+  var angNote = (ang.media.type === 'priv' && !privKey ? ang.media.fallback : ang.media).note;
   return '<h1>Daily habits</h1><p class="muted">2 minutes, every day · '+fmt(new Date())+'</p>'+
     '<div class="card stack t-knee">'+HABITS.map(function(txt,i){
       return '<label class="tick'+(h[i]?' on':'')+'" style="margin-top:0"><input type="checkbox" data-habit="'+i+'"'+(h[i]?' checked':'')+'> <span>'+esc(txt)+'</span></label>';
     }).join('')+'<p class="muted" style="margin:0">Ticks reset each day.</p></div>'+
     '<h2>How to do them</h2><div class="minis t-post">'+
       '<article class="ex">'+mediaHTML(chin.media, chin.name)+'<div class="ex-body"><h3>'+esc(chin.name)+'</h3><p class="how" style="margin-top:8px">'+esc(chin.how)+'</p></div></article>'+
-      '<article class="ex">'+mediaHTML(ang.media, ang.name)+'<div class="ex-body"><h3>'+esc(ang.name)+'</h3><p class="how" style="margin-top:8px">'+esc(ang.how)+'</p><p class="vnote">'+esc(ang.media.note)+'</p></div></article>'+
+      '<article class="ex">'+mediaHTML(ang.media, ang.name)+'<div class="ex-body"><h3>'+esc(ang.name)+'</h3><p class="how" style="margin-top:8px">'+esc(ang.how)+'</p>'+(angNote ? '<p class="vnote">'+esc(angNote)+'</p>' : '')+'</div></article>'+
     '</div>';
 }
 
@@ -642,7 +647,7 @@ function viewSafety(){
     YT_CREDITS.map(function(c){ return '<li>'+esc(c[0])+': <a href="'+c[2]+'" target="_blank" rel="noopener">'+esc(c[1])+'</a></li>'; }).join('')+
     '</ul><p class="muted" style="margin-top:12px">The other videos and photos are from Pexels and free to use. Thank you to:</p><ul class="plain credits">'+
     CREDITS.map(function(c){ return '<li>'+esc(c[0])+': <a href="'+c[2]+'" target="_blank" rel="noopener">'+esc(c[1])+'</a></li>'; }).join('')+
-    '</ul><p class="muted" style="margin-top:12px">The chin tuck is a drawn illustration, and so is the hamstring walkout while your clips are locked, because no free photo of those moves was available. The star diagram is drawn too.</p></div>';
+    '</ul><p class="muted" style="margin-top:12px">The chin tuck and hamstring walkout are drawn illustrations while your clips are locked, because no free photo of those moves was available. The star diagram is drawn too.</p></div>';
 }
 
 /* ---------- router ---------- */
