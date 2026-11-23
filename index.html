@@ -373,16 +373,16 @@ var POST = {
   progressionText:'Posture day progression: add 5–10 s to the planks or 2 reps per set each week, and move to a stronger band in week 3.',
   sections:[
     {title:'Stretches and mobility (10 min)', items:[
-      {id:'p1', name:'Half-kneeling hip flexor stretch', dose:'2 × 30 s per side', how:'Cushion under the back knee. Tuck the tailbone under and ease the hips forward until the front of the hip stretches. If kneeling on the left knee hurts, do it standing in a lunge.', media:I('hipflexor',640,480,'Put a cushion under the back knee.'), timer:{opts:[30], hint:'Repeat for each side and each set.'}},
-      {id:'p2', name:'Cat-cow', dose:'10 slow reps', how:'On all fours, round your back up toward the ceiling, then let the chest drop and look forward. Move slowly with your breath.', media:V('catcow')},
+      {id:'p1', name:'Half-kneeling hip flexor stretch', dose:'2 × 30 s per side', how:'Cushion under the back knee. Tuck the tailbone under and ease the hips forward until the front of the hip stretches. If kneeling on the left knee hurts, do it standing in a lunge.', media:Pv('p_hipflex',480,480,'Good Living Medical Centre', I('hipflexor',640,480,'Put a cushion under the back knee.'), 'Put a cushion under the back knee.'), timer:{opts:[30], hint:'Repeat for each side and each set.'}},
+      {id:'p2', name:'Cat-cow', dose:'10 slow reps', how:'On all fours, round your back up toward the ceiling, then let the chest drop and look forward. Move slowly with your breath.', media:Pv('p_catcow',640,360,'Hinge Health', V('catcow'))},
       {id:'p3', name:'Upper-back extension', dose:'10 reps', how:'Place a foam roller or rolled towel under the upper back and support your head with your hands. Lean back over it gently, then return. Keep the lower back still.', media:V('foamroller')},
-      {id:'p4', name:'Doorway chest stretch', dose:'2 × 30 s', how:'Forearm on the door frame with the elbow at shoulder height. Step through until the chest stretches.', media:V('doorway',640,480,'Shown against a post. A door frame works the same way.'), timer:{opts:[30], hint:'Repeat for each set.'}},
+      {id:'p4', name:'Doorway chest stretch', dose:'2 × 30 s', how:'Forearm on the door frame with the elbow at shoulder height. Step through until the chest stretches.', media:Pv('p_doorway',540,720,'Proformance Sports Rehab & Nutrition', V('doorway',640,480,'Shown against a post. A door frame works the same way.'), 'Shown against a post. A door frame works the same way.'), timer:{opts:[30], hint:'Repeat for each set.'}},
       {id:'p5', name:'Child’s pose', dose:'30–60 s', how:'Sit back toward your heels, reach the arms forward and relax the head down. If the left knee dislikes the deep bend, put a cushion between heels and hips.', media:V('childpose'), timer:{opts:[30,60]}}
     ]},
     {title:'Strength', items:[
-      {id:'p6', name:'Dead bug', dose:'3 × 8 per side', how:'Lie on your back with the lower back pressed to the floor. Slowly lower the opposite arm and leg, return, and switch sides.', media:V('deadbug',640,360)},
+      {id:'p6', name:'Dead bug', dose:'3 × 8 per side', how:'Lie on your back with the lower back pressed to the floor. Slowly lower the opposite arm and leg, return, and switch sides.', media:Pv('p_deadbug',640,360,'Pursuit Physical Therapy', V('deadbug',640,360))},
       {id:'p7', name:'Plank with tailbone tucked', dose:'3 × 20–40 s', how:'Elbows under the shoulders, body in one straight line. Tuck the tailbone and squeeze the glutes so the lower back does not sag.', media:I('plank'), timer:{opts:[20,25,30,35,40], byWeek:[20,30,35,40], hint:'Repeat for each set. Add 5–10 s each week.'}},
-      {id:'p8', name:'Bird dog', dose:'3 × 8 per side', how:'On all fours, reach one arm forward and the opposite leg back. Keep the hips level and the back flat, pause, then switch.', media:I('birddog',640,426)},
+      {id:'p8', name:'Bird dog', dose:'3 × 8 per side', how:'On all fours, reach one arm forward and the opposite leg back. Keep the hips level and the back flat, pause, then switch.', media:Pv('p_birddog',640,360,'Hinge Health', I('birddog',640,426))},
       {id:'p9', name:'Band rows', dose:'3 × 12–15', how:'Anchor a band at chest height. Pull the elbows back, squeeze the shoulder blades together, and release slowly.', media:V('bandrow',640,480,'Shown seated with the band around the feet. The pull is the same with the band anchored at chest height.'), weeks:{3:'Week 3: move to a stronger band.',4:'Keep the stronger band from week 3.'}},
       {id:'p10', name:'Band pull-aparts', dose:'3 × 15', how:'Hold a band at chest height with straight arms. Pull it apart until it touches your chest, squeezing the shoulder blades, then return slowly.', media:V('pullapart'), weeks:{3:'Week 3: move to a stronger band.',4:'Keep the stronger band from week 3.'}},
       {id:'p11', name:'Wall angels', dose:'3 × 10', how:'Stand with your back, head and arms against a wall. Slide the arms up and down like a goalpost, keeping the lower back close to the wall.', media:V('wallangels',640,480,'Shown a step away from the wall. Do it with your back, head and arms against the wall.')},
@@ -416,7 +416,12 @@ var YT_CREDITS = [
   ['Glute bridge','Hinge Health','https://www.youtube.com/watch?v=PhTDzR0TpZs'],
   ['Hamstring walkout','Daily Workout Builder','https://www.youtube.com/shorts/YOnrl0Ar6D4'],
   ['Reverse lunge holding a chair','Body By Finn Fitness','https://www.youtube.com/watch?v=NuSAOvrwHbE'],
-  ['Star excursion balance','Rehab My Patient','https://www.youtube.com/watch?v=UoMSMdMKfBY']
+  ['Star excursion balance','Rehab My Patient','https://www.youtube.com/watch?v=UoMSMdMKfBY'],
+  ['Half-kneeling hip flexor stretch','Good Living Medical Centre','https://www.youtube.com/shorts/7lGIfjasuNo'],
+  ['Cat-cow','Hinge Health','https://www.youtube.com/watch?v=1Y0YjXS9sKI'],
+  ['Doorway chest stretch','Proformance Sports Rehab & Nutrition','https://www.youtube.com/shorts/W1WcacpQ_RM'],
+  ['Dead bug','Pursuit Physical Therapy','https://www.youtube.com/watch?v=o4GKiEoYClI'],
+  ['Bird dog','Hinge Health','https://www.youtube.com/watch?v=xEDnlOxeJH4']
 ];
 var CREDITS = [
   ['Butterfly stretch (offline clip)','Mikhail Nilov','https://www.pexels.com/video/7500537/'],
@@ -551,7 +556,7 @@ function unlockHTML(){
   return privKey
     ? '<div class="unlock on"><span>🔓 Your private clips are unlocked on this device.</span><button type="button" class="btn ghost" id="lockBtn">Lock</button></div>'
     : '<div class="unlock"><b>🔒 Your private clips</b><p class="muted" style="margin:4px 0 10px">'+(privSupported()
-        ? 'Enter your passcode once on this device to show your own stretch clips. Until then you see free clips.'
+        ? 'Enter your passcode once on this device to show your own exercise clips. Until then you see free clips.'
         : 'Open the site from its web link (not as a file) to unlock your clips.')+'</p>'+
       (privSupported() ? '<form id="unlockForm" class="row"><input id="unlockPass" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Passcode" aria-label="Passcode"><button type="submit" class="btn primary">Unlock</button></form><p class="muted" id="unlockMsg" style="margin:8px 0 0"></p>' : '')+'</div>';
 }
