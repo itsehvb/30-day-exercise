@@ -1,9 +1,7 @@
 /* Offline support: caches the page, icons, photos and videos. */
-const CACHE = 'ex30-v9';
+const CACHE = 'ex30-v10';
 const ASSETS = [
   "./", "index.html", "manifest.webmanifest", "icon.svg", "icon-180.png", "icon-192.png", "icon-512.png",
-  "images/bandrow.jpg",
-  "images/bandrow.mp4",
   "images/birddog.jpg",
   "images/bridge.jpg",
   "images/bridge.mp4",
@@ -15,14 +13,16 @@ const ASSETS = [
   "images/calfstretch.mp4",
   "images/catcow.jpg",
   "images/catcow.mp4",
+  "images/chairext.jpg",
+  "images/chairext.mp4",
   "images/childpose.jpg",
   "images/childpose.mp4",
   "images/deadbug.jpg",
   "images/deadbug.mp4",
+  "images/dbrow.jpg",
+  "images/dbrow.mp4",
   "images/doorway.jpg",
   "images/doorway.mp4",
-  "images/foamroller.jpg",
-  "images/foamroller.mp4",
   "images/glutestretch.jpg",
   "images/glutestretch.mp4",
   "images/hamstring.jpg",

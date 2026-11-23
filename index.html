@@ -370,12 +370,12 @@ var KNEE = {
 var POST = {
   key:'post', title:'Posture day', minutes:'about 35 minutes',
   purpose:'Purpose: fix anterior pelvic tilt, kyphosis and forward neck. Open up the hips, chest and upper back, then strengthen the core, upper back and deep neck muscles.',
-  progressionText:'Posture day progression: add 5–10 s to the planks or 2 reps per set each week, and move to a stronger band in week 3.',
+  progressionText:'Posture day progression: add 5–10 s to the planks or 2 reps per set each week, and move to a stronger band and a heavier dumbbell in week 3.',
   sections:[
     {title:'Stretches and mobility (10 min)', items:[
       {id:'p1', name:'Half-kneeling hip flexor stretch', dose:'2 × 30 s per side', how:'Cushion under the back knee. Tuck the tailbone under and ease the hips forward until the front of the hip stretches. If kneeling on the left knee hurts, do it standing in a lunge.', media:Pv('p_hipflex',480,480,'Good Living Medical Centre', I('hipflexor',640,480,'Put a cushion under the back knee.'), 'Put a cushion under the back knee.'), timer:{opts:[30], hint:'Repeat for each side and each set.'}},
       {id:'p2', name:'Cat-cow', dose:'10 slow reps', how:'On all fours, round your back up toward the ceiling, then let the chest drop and look forward. Move slowly with your breath.', media:Pv('p_catcow',640,360,'Hinge Health', V('catcow'))},
-      {id:'p3', name:'Upper-back extension', dose:'10 reps', how:'Place a foam roller or rolled towel under the upper back and support your head with your hands. Lean back over it gently, then return. Keep the lower back still.', media:V('foamroller')},
+      {id:'p3', name:'Chair-back extension', dose:'10 reps', how:'Sit tall on a chair whose backrest reaches the bottom of your shoulder blades. Put your hands behind your head, lean back over the top of the backrest, then come back up. Move only the upper back and keep the lower back still.', media:V('chairext',480,480,'The video shows the hands-behind-head lean. Use a chair with a lower backrest and bend back over its top edge.')},
       {id:'p4', name:'Doorway chest stretch', dose:'2 × 30 s', how:'Forearm on the door frame with the elbow at shoulder height. Step through until the chest stretches.', media:Pv('p_doorway',540,720,'Proformance Sports Rehab & Nutrition', V('doorway',640,480,'Shown against a post. A door frame works the same way.'), 'Shown against a post. A door frame works the same way.'), timer:{opts:[30], hint:'Repeat for each set.'}},
       {id:'p5', name:'Child’s pose', dose:'30–60 s', how:'Sit back toward your heels, reach the arms forward and relax the head down. If the left knee dislikes the deep bend, put a cushion between heels and hips.', media:V('childpose'), timer:{opts:[30,60]}}
     ]},
@@ -383,7 +383,7 @@ var POST = {
       {id:'p6', name:'Dead bug', dose:'3 × 8 per side', how:'Lie on your back with the lower back pressed to the floor. Slowly lower the opposite arm and leg, return, and switch sides.', media:Pv('p_deadbug',640,360,'Pursuit Physical Therapy', V('deadbug',640,360))},
       {id:'p7', name:'Plank with tailbone tucked', dose:'3 × 20–40 s', how:'Elbows under the shoulders, body in one straight line. Tuck the tailbone and squeeze the glutes so the lower back does not sag.', media:I('plank'), timer:{opts:[20,25,30,35,40], byWeek:[20,30,35,40], hint:'Repeat for each set. Add 5–10 s each week.'}},
       {id:'p8', name:'Bird dog', dose:'3 × 8 per side', how:'On all fours, reach one arm forward and the opposite leg back. Keep the hips level and the back flat, pause, then switch.', media:Pv('p_birddog',640,360,'Hinge Health', I('birddog',640,426))},
-      {id:'p9', name:'Band rows', dose:'3 × 12–15', how:'Anchor a band at chest height. Pull the elbows back, squeeze the shoulder blades together, and release slowly.', media:V('bandrow',640,480,'Shown seated with the band around the feet. The pull is the same with the band anchored at chest height.'), weeks:{3:'Week 3: move to a stronger band.',4:'Keep the stronger band from week 3.'}},
+      {id:'p9', name:'One-arm dumbbell row', dose:'3 × 12 per arm', how:'Stand beside a chair, put one hand on the seat and step back into a split stance with a flat back. Pull the dumbbell up to your ribs, squeeze the shoulder blade back, then lower slowly. Switch arms.', media:V('dbrow',640,480,'Shown with a knee on the bench. Keep both feet on the floor and just a hand on the chair, which is easier on the left knee.'), weeks:{3:'Week 3: use a heavier dumbbell.',4:'Keep the heavier dumbbell from week 3.'}},
       {id:'p10', name:'Band pull-aparts', dose:'3 × 15', how:'Hold a band at chest height with straight arms. Pull it apart until it touches your chest, squeezing the shoulder blades, then return slowly.', media:Pv('p_pullapart',480,600,'Movement Physio', V('pullapart')), weeks:{3:'Week 3: move to a stronger band.',4:'Keep the stronger band from week 3.'}},
       {id:'p11', name:'Wall angels', dose:'3 × 10', how:'Stand with your back, head and arms against a wall. Slide the arms up and down like a goalpost, keeping the lower back close to the wall.', media:Pv('p_wallangel',490,600,'Rehab My Patient', V('wallangels',640,480,'Shown a step away from the wall. Do it with your back, head and arms against the wall.'))},
       {id:'p12', name:'Prone Y-T-W raises', dose:'2 × 8 each', how:'Lie face down. Lift the arms in a Y shape, then a T, then a W, thumbs up and shoulder blades squeezed. Keep the neck long.', media:Pv('p_ytw',480,270,'WAC Sports Performance', V('ytw',640,360,'The video shows the Y position.'))},
@@ -440,13 +440,13 @@ var CREDITS = [
   ['Calf raises','Gaurav Kumar','https://www.pexels.com/video/32115656/'],
   ['Half-kneeling hip flexor stretch (photo)','Yazid N','https://www.pexels.com/photo/40139104/'],
   ['Cat-cow','Mikhail Nilov','https://www.pexels.com/video/7531372/'],
-  ['Upper-back extension','Anastasia Shuraeva','https://www.pexels.com/video/8935472/'],
+  ['Chair-back extension','Tom Shutkin','https://www.pexels.com/video/man-with-headphones-relaxing-at-home-office-desk-35331903/'],
   ['Chest stretch','Mikhail Nilov','https://www.pexels.com/video/8457014/'],
   ['Child’s pose','Mikhail Nilov','https://www.pexels.com/video/7500544/'],
   ['Dead bug','Gustavo Fring','https://www.pexels.com/video/6286160/'],
   ['Plank (still from video)','Polina Tankilevitch','https://www.pexels.com/video/6525496/'],
   ['Bird dog (photo)','Marta Wave','https://www.pexels.com/photo/6454196/'],
-  ['Band rows','Kampus Production','https://www.pexels.com/video/6022768/'],
+  ['One-arm dumbbell row','RDNE Stock project','https://www.pexels.com/video/man-working-out-at-the-gym-7187392/'],
   ['Band pull-aparts','MART PRODUCTION','https://www.pexels.com/video/8837121/'],
   ['Wall angels','Ketut Subiyanto','https://www.pexels.com/video/5034331/'],
   ['Prone Y raise','Aliaksei Masiukevich','https://www.pexels.com/video/31035756/']
